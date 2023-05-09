@@ -3,3 +3,4 @@
 *.wit
 __pycache__
 *.egg-info
+venv/
