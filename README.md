@@ -1,4 +1,4 @@
-# PicoZK
+# SIEVE-IR-Phase3
 
 Integrated, Efficient, and Extensible Zero-Knowledge Proof Engineering
 

@@ -24,7 +24,7 @@ class CuckooTable:
     def hash_two(self, item):
         return (item // self.table_size) % self.table_size
 
-    def set_item(self, item): 
+    def set_item(self, item):
         index_h1 = self.hash_one(item)
         loop_history = 0
         evicted_item = self.table[index_h1] if self.table[index_h1]!=None else None
@@ -60,6 +60,9 @@ class CuckooTable:
 
     def replace_at(self, index, item):
         self.table[index]=item
+    
+    def set_non_emplist(self, index, item):
+        self.non_empty_indices[index] = item
 
     def update_indices(self, index, item):
         if index in self.empty_indices:

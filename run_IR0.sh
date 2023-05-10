@@ -45,19 +45,23 @@ cp $orig$file.py $dir$file.py
 
 
 name=$target/$file$underscore$prime_fam$underscore$size
-# rel=$name.rel
-# wit=$name.type1.wit
-# ins=$name.type1.ins
 
 rel="picozk_test.rel"
-wit="picozk_test.type1.wit"
-ins="picozk_test.type1.ins"
+wit0="picozk_test.type0.wit"
+ins0="picozk_test.type0.ins"
+wit1="picozk_test.type1.wit"
+ins1="picozk_test.type1.ins"
+wit2="picozk_test.type2.wit"
+ins2="picozk_test.type2.ins"
 
 
 [ -e $rel  ] && rm $rel
-[ -e $wit  ] && rm $wit
-[ -e $ins  ] && rm $ins
-
+[ -e $wit0  ] && rm $wit0
+[ -e $ins0 ] && rm $ins0
+[ -e $wit1  ] && rm $wit1
+[ -e $ins1 ] && rm $ins1
+[ -e $wit2  ] && rm $wit2
+[ -e $ins2 ] && rm $ins2
 
 # Actual Execution
 
@@ -65,7 +69,7 @@ echo "Running $file ....";
 
 if python3 $dir$file.py
     then
-        if wtk-firealarm $rel $wit $ins
+        if wtk-firealarm $rel $wit0 $ins0 $wit1 $ins1 $wit2 $ins2
             then
                 echo "wtk-firealarm successfully completed"
             else

@@ -7,6 +7,7 @@ import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
 
+# TODO: v0 Move this to utils
 @dataclass
 class CurvePoint:
     is_infinity: BooleanWire
@@ -90,7 +91,7 @@ def map_on_eliptic(secret, g):
         secret_h = SecretInt(h, field=n)
         result = verify(sig_r, sig_s, secret_h, pubkey, p)
         assert0(result)
-    return sig
+    return sig_r
 
 
 # Instantiate EC
@@ -99,7 +100,7 @@ n = g.order()
 
 
 # User input
-num_elem = 3
+num_elem = 1
 secrets = [randrange( 1, n ) for _ in range(num_elem)]
 
 
@@ -113,13 +114,17 @@ print("secret", secrets)
 print("cuckoo_table", cuckoo_table.get_table())
 empty = cuckoo_table.get_empty_indices()
 non_empty = cuckoo_table.get_non_empty_indices()
+print("non_empty_indices before", non_empty)
 
-
-# TODO: v0  Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
-for idx, val in non_empty:
+# Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
+for i in range(len(non_empty)):
+    idx, val = non_empty[i]
     map_elem = map_on_eliptic(val, g)
     cuckoo_table.replace_at(idx, map_elem)
+    cuckoo_table.set_non_emplist(i, (idx, map_elem))
 
+print("cuckoo_table", cuckoo_table.get_table())
+print("non_empty_indices after", cuckoo_table.get_non_empty_indices())
 
 # TODO: v1 Make bots by polynomial interpolation
 
