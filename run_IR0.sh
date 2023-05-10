@@ -40,7 +40,7 @@ fi
 # Copying a designated statement file
 
 dir="/usr/src/app/examples/"
-orig="/code/examples/"
+orig="/code/"
 cp $orig$file.py $dir$file.py
 
 
