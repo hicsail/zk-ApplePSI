@@ -38,13 +38,11 @@ def map_on_eliptic(secret, g, p, n):
     sig = privkey.sign(h, randrange(1,n))
 
     # Secret signature, secret hash value; public pubkey
-    with PicoZKCompiler('picozk_test', field=[p,n]):
-
-        sig_r = SecretInt(sig.r, field=n)
-        sig_s = SecretInt(sig.s, field=n)
-        secret_h = SecretInt(h, field=n)
-        result, xy = verify(sig_r, sig_s, secret_h, pubkey, p)
-        assert0(result)
+    sig_r = SecretInt(sig.r, field=n)
+    sig_s = SecretInt(sig.s, field=n)
+    secret_h = SecretInt(h, field=n)
+    result, xy = verify(sig_r, sig_s, secret_h, pubkey, p)
+    assert0(result)
     return xy
 
 
@@ -60,39 +58,42 @@ secrets = [randrange( 1, n ) for _ in range(num_elem)]
 print("secrets", secrets)
 print("")
 
-# TODO: v2 Change secrets into SecretInt
+
+with PicoZKCompiler('picozk_test', field=[p,n]):
+    
+    # TODO: v2 Change secrets into SecretInt
 
 
-# Make a Cuckoo table
-size_factor = 0.7
-cuckoo_table = CuckooTable(secrets, size_factor)
-empty = cuckoo_table.get_empty_indices()
-non_empty = cuckoo_table.get_non_empty_indices() 
+    # Make a Cuckoo table
+    size_factor = 0.7
+    cuckoo_table = CuckooTable(secrets, size_factor)
+    empty = cuckoo_table.get_empty_indices()
+    non_empty = cuckoo_table.get_non_empty_indices() 
 
-# Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
-for i in range(len(non_empty)):
-    idx, val = non_empty[i]
-    map_elem = map_on_eliptic(val, g, p, n)
-    cuckoo_table.replace_at(idx, map_elem)
-    cuckoo_table.set_non_emplist(i, (idx, map_elem))
-
-
-# TODO: v1 Make bots by polynomial interpolation
-print("First")
-print(non_empty[0][1].x)
-print("")
-
-print("Second")
-print(non_empty[1][1].x)
-print("")
-
-print("Addition")
-print(non_empty[0][1].x-non_empty[1][1].x)
+    # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
+    for i in range(len(non_empty)):
+        idx, val = non_empty[i]
+        map_elem = map_on_eliptic(val, g, p, n)
+        cuckoo_table.replace_at(idx, map_elem)
+        cuckoo_table.set_non_emplist(i, (idx, map_elem))
 
 
-# res = lagrange_interpolation([non_empty[0][1], non_empty[1][1]], 0, p)
-# print("")
-# print("")
-# print("res", res)
+    # TODO: v1 Make bots by polynomial interpolation
+    print("First")
+    print(non_empty[0][1].x)
+    print("")
 
-# TODO: v2 verify cuckoo table process
+    print("Second")
+    print(non_empty[1][1].x)
+    print("")
+
+    print("Addition")
+    print(non_empty[0][1].x-non_empty[1][1].x)
+
+
+    # res = lagrange_interpolation([non_empty[0][1], non_empty[1][1]], 0, p)
+    # print("")
+    # print("")
+    # print("res", res)
+
+    # TODO: v2 verify cuckoo table process
