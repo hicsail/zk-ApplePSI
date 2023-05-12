@@ -8,8 +8,9 @@ def remove_duplicates(secret:list):
 
 @dataclass
 class CuckooTable:
-    def __init__(self, secrets:list, size_factor:float):
+    def __init__(self, secrets:list, size_factor:float, p):
         secrets = remove_duplicates(secrets)
+        self.p = p
         self.size_factor = size_factor
         self.table_size = math.ceil(len(secrets)*(1+size_factor))
         self.table = [None] * self.table_size
@@ -19,10 +20,10 @@ class CuckooTable:
 
     # As nature of Cuckoo Table, it gives each element multiple choices for positions
     def hash_one(self, item):
-        return item % self.table_size
+        return ((99529 * item + 37309) % self.p) % self.table_size
 
     def hash_two(self, item):
-        return (item // self.table_size) % self.table_size
+        return ((86837 * item + 40637) % self.p) % self.table_size
 
     def set_item(self, item):
         index_h1 = self.hash_one(item)
