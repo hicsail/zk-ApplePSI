@@ -1,7 +1,7 @@
 version: '3'
 services:
   sieve_ir:
-    container_name: sieveir-phase-3
+    container_name: sieveir-p3
     platform: linux/amd64
     build: ./
     volumes:
