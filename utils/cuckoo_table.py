@@ -1,15 +1,10 @@
 import math
 from dataclasses import dataclass
-
-def remove_duplicates(secret:list): 
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
+from picozk import *
 
 @dataclass
 class CuckooTable:
-    def __init__(self, secrets:list, size_factor:float, p):
-        secrets = remove_duplicates(secrets)
+    def __init__(self, secrets:ZKList, size_factor:float, p):
         self.p = p
         self.size_factor = size_factor
         self.table_size = math.ceil(len(secrets)*(1+size_factor))
@@ -18,7 +13,6 @@ class CuckooTable:
         self.non_empty_indices = []
         self.bulk_set(secrets)
 
-    # As nature of Cuckoo Table, it gives each element multiple choices for positions
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
 

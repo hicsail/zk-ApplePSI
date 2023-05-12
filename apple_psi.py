@@ -9,6 +9,11 @@ from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
 import random
 
+def remove_duplicates(secret:list): 
+    _secret = []
+    [_secret.append(x) for x in secret if x not in _secret]
+    return _secret
+
 # Verify the ECDSA signature represented by (r, s)
 def verify(r, s, hash_val, pubkey, p):
     c = modular_inverse(s, n)
@@ -25,7 +30,8 @@ def verify(r, s, hash_val, pubkey, p):
     xy2 = spk.scale(u2_p)
     xy = xy1.add(xy2)
     x_n = xy.x.to_binary().to_arithmetic(field=n)
-    return x_n - r, xy
+    assert0(x_n - r)
+    return xy
 
 # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
 def map_on_eliptic(secret, g, p, n):
@@ -42,8 +48,7 @@ def map_on_eliptic(secret, g, p, n):
     sig_r = SecretInt(sig.r, field=n)
     sig_s = SecretInt(sig.s, field=n)
     secret_h = SecretInt(h, field=n)
-    result, xy = verify(sig_r, sig_s, secret_h, pubkey, p)
-    assert0(result)
+    xy = verify(sig_r, sig_s, secret_h, pubkey, p)
     return xy
 
 def select_group_elem(non_empty:list, n):
@@ -58,19 +63,13 @@ g = ecdsa.ecdsa.generator_secp256k1
 p = g.curve().p()
 n = g.order()
 
-
-# User input
-num_elem = 2
-secrets = [randrange( 1, n ) for _ in range(num_elem)]
-print("secrets", secrets)
-print("")
-
-
 with PicoZKCompiler('picozk_test', field=[p,n]):
+
+    # User input
+    num_elem = 1
+    _secrets = remove_duplicates([randrange( 1, n ) for _ in range(num_elem)])
+    secrets = ZKList(_secrets)
     
-    # TODO: v2 Change secrets into SecretInt
-
-
     # Make a Cuckoo table
     size_factor = 2
     cuckoo_table = CuckooTable(secrets, size_factor, p)
@@ -92,8 +91,5 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         random_elems = select_group_elem(non_empty, num_elems)
         bot_elem = lagrange_interpolation(random_elems, 0, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
-
-    print("Resulting Table")
-    print(cuckoo_table.get_table())
 
     # TODO: v2 verify cuckoo table process
