@@ -23,7 +23,5 @@ RUN apt update && apt install -y\
 COPY . .
 
 RUN pip3 install .
-# RUN python3 install.py --deps --tool --ot --zk
-# RUN ldconfig
 
 CMD [ "sleep", "infinity" ]

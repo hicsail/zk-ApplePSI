@@ -5,4 +5,4 @@ services:
     platform: linux/amd64
     build: ./
     volumes:
-      - ./examples:/code
+      - ./:/code
