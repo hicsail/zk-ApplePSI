@@ -72,7 +72,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
 
 
     # Make a Cuckoo table
-    size_factor = 0.7
+    size_factor = 2
     cuckoo_table = CuckooTable(secrets, size_factor, p)
     empty = cuckoo_table.get_empty_indices()
     non_empty = cuckoo_table.get_non_empty_indices() 

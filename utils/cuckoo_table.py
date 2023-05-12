@@ -27,34 +27,13 @@ class CuckooTable:
 
     def set_item(self, item):
         index_h1 = self.hash_one(item)
-        loop_history = 0
-        evicted_item = self.table[index_h1] if self.table[index_h1]!=None else None
-
-        while evicted_item is not None:
-            loop_history += 1
-            if loop_history == self.table_size * 2: # give up if stuck in loop
-                return False
-
-            index_h2 = self.hash_two(evicted_item)
-
-            if index_h1 == index_h2:
-                index_h2 = (index_h1 + 1) % self.table_size
-            ''' In case of collition even after two rounds of hashing, a new element take the place
-                and the old element looks for a new place in the next iterations.
-                It gives up if loop takes place twice as many time as the size of table, which indicates
-                inifinite loop.
-            '''
-
-            old_evict_elem = evicted_item
-            evicted_item = self.table[index_h2]
-
-            self.table[index_h2] = old_evict_elem
-            self.update_indices(index_h2, old_evict_elem)
-            index_h1 = index_h2
-
-        self.table[index_h1] = item
-        self.update_indices(index_h1, item)
-        return True
+        index_h2 = self.hash_two(item)
+        if self.table[index_h1]==None:
+            self.table[index_h1]=item
+            self.update_indices(index_h1, item)
+        else:
+            self.table[index_h2]==item
+            self.update_indices(index_h2, item)
 
     def get_item_at(self, index):
         return self.table[index]
@@ -72,8 +51,7 @@ class CuckooTable:
 
     def bulk_set(self, secret):
         for item in secret:
-            if not self.set_item(item):
-                print(f"Failed to add item {item} due to hash collisions.")
+            self.set_item(item)
 
     def get_table(self):
         return self.table
