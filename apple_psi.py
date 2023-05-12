@@ -7,6 +7,7 @@ sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
+import random
 
 # Verify the ECDSA signature represented by (r, s)
 def verify(r, s, hash_val, pubkey, p):
@@ -45,6 +46,12 @@ def map_on_eliptic(secret, g, p, n):
     assert0(result)
     return xy
 
+def select_group_elem(non_empty:list, n):
+    random_elems = random.sample(non_empty, n)
+    res_elems =[]
+    for el in random_elems:
+        res_elems.append(el[1])
+    return res_elems
 
 # Instantiate EC: Curve & generator parameters
 g = ecdsa.ecdsa.generator_secp256k1
@@ -78,22 +85,15 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
 
 
-    # v1 Make bots by polynomial interpolation
-    print("First")
-    print(non_empty[0][1].x)
-    print("")
+    # Make bots by polynomial interpolation
+    for i in range(len(empty)):
+        bot_idx = empty[i]
+        num_elems=2 # The number of elements to iterpolate with
+        random_elems = select_group_elem(non_empty, num_elems)
+        bot_elem = lagrange_interpolation(random_elems, 0, p)
+        cuckoo_table.replace_at(bot_idx, bot_elem)
 
-    print("Second")
-    print(non_empty[1][1].x)
-    print("")
-
-    print("Addition")
-    print(non_empty[0][1].x-non_empty[1][1].x)
-
-
-    res = lagrange_interpolation([non_empty[0][1], non_empty[1][1]], 0, p)
-    print("")
-    print("")
-    print("res", res)
+    print("Resulting Table")
+    print(cuckoo_table.get_table())
 
     # TODO: v2 verify cuckoo table process
