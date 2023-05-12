@@ -78,7 +78,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
 
 
-    # TODO: v1 Make bots by polynomial interpolation
+    # v1 Make bots by polynomial interpolation
     print("First")
     print(non_empty[0][1].x)
     print("")
@@ -91,9 +91,9 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     print(non_empty[0][1].x-non_empty[1][1].x)
 
 
-    # res = lagrange_interpolation([non_empty[0][1], non_empty[1][1]], 0, p)
-    # print("")
-    # print("")
-    # print("res", res)
+    res = lagrange_interpolation([non_empty[0][1], non_empty[1][1]], 0, p)
+    print("")
+    print("")
+    print("res", res)
 
     # TODO: v2 verify cuckoo table process

@@ -1,3 +1,4 @@
+from picozk import *
 from curvepoint import CurvePoint
 
 def lagrange_interpolation(points:list[CurvePoint], x, p):
@@ -8,7 +9,7 @@ def lagrange_interpolation(points:list[CurvePoint], x, p):
         term = points[i].y
         for j in range(n):
             if j != i:
-                term *= (x - points[j].x) / (points[i].x - points[j].x)
+                term *= (x - points[j].x) * modular_inverse(points[i].x - points[j].x, p)
         result.y += term
 
     return result
