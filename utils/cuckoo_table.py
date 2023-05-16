@@ -77,29 +77,3 @@ class CuckooTable:
             idx1 = self.sec_hash_one(SecretInt(val))-idx
             idx2 = self.sec_hash_two(SecretInt(val))-idx
             assert0(idx1*idx2)
-
-
-
-# Test the class
-# secret = [1, 18, 3, 20, 37, 6, 7, 8, 9, 10] # The algorithm does not work if more than two 
-# size=0.7
-# table = CuckooTable(secret, size)
-# print("")
-# print("input", secret)
-# output = table.get_table()
-# print("output", output)
-# print("empty indices", table.get_empty_indices())
-# print("non-empty", table.get_non_empty_indices())
-
-# empty = table.get_empty_indices()
-# non = table.get_non_empty_indices()
-
-# for e in empty:
-#     if output[e]!=None:
-#         print("False:empty at", e)
-# print("passed")
-
-# for n in non:
-#     if output[n[0]]!=n[1]:
-#         print("False:non-empty at", n[0])
-# print("passed")

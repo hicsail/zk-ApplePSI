@@ -1,7 +1,6 @@
 from picozk import *
 import ecdsa
 from random import randrange
-from ecdsa import numbertheory
 import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
