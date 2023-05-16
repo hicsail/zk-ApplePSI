@@ -4,7 +4,7 @@ from picozk import *
 
 @dataclass
 class CuckooTable:
-    def __init__(self, secrets:ZKList, size_factor:float, p):
+    def __init__(self, secrets:list, size_factor:float, p):
         self.p = p
         self.size_factor = size_factor
         self.table_size = math.ceil(len(secrets)*(1+size_factor))

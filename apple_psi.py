@@ -66,15 +66,14 @@ n = g.order()
 with PicoZKCompiler('picozk_test', field=[p,n]):
 
     # User input
-    num_elem = 1
-    _secrets = remove_duplicates([randrange( 1, n ) for _ in range(num_elem)])
-    secrets = ZKList(_secrets)
+    num_elem = 2
+    secrets = remove_duplicates([randrange( 1, n ) for _ in range(num_elem)])
     
     # Make a Cuckoo table
     size_factor = 2
     cuckoo_table = CuckooTable(secrets, size_factor, p)
     empty = cuckoo_table.get_empty_indices()
-    non_empty = cuckoo_table.get_non_empty_indices() 
+    non_empty = cuckoo_table.get_non_empty_indices()
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     for i in range(len(non_empty)):
