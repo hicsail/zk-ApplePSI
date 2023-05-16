@@ -3,13 +3,13 @@ from curvepoint import CurvePoint
 
 def lagrange_interpolation(points:list[CurvePoint], x, p):
     n = len(points)
-    result = CurvePoint(False, 0, 0, p)
+    result = CurvePoint(False, x, 0, p)
 
     for i in range(n):
-        term = points[i].y
+        term = points[i][1].y
         for j in range(n):
             if j != i:
-                term *= ((x - points[j].x) * modular_inverse(points[i].x - points[j].x, p)) % p
+                term *= ((x - points[j][1].x) * modular_inverse(points[i][1].x - points[j][1].x, p)) % p
         result.y = (result.y + term) % p
 
     return result

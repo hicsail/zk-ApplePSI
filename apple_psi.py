@@ -51,13 +51,6 @@ def map_on_eliptic(secret, g, p, n):
     xy = verify(sig_r, sig_s, secret_h, pubkey, p)
     return xy
 
-def select_group_elem(non_empty:list, n):
-    random_elems = random.sample(non_empty, n)
-    res_elems =[]
-    for el in random_elems:
-        res_elems.append(el[1])
-    return res_elems
-
 # Instantiate EC: Curve & generator parameters
 g = ecdsa.ecdsa.generator_secp256k1
 p = g.curve().p()
@@ -68,27 +61,37 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     # User input
     num_elem = 2
     secrets = remove_duplicates([randrange( 1, n ) for _ in range(num_elem)])
+    print("secrets", secrets)
     
     # Make a Cuckoo table
     size_factor = 2
     cuckoo_table = CuckooTable(secrets, size_factor, p)
-    empty = cuckoo_table.get_empty_indices()
-    non_empty = cuckoo_table.get_non_empty_indices()
+
+    #TODO: v2 ZK proof for the hash functions
+    # cuckoo_table.verify_hash()
+
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
+    non_empty = cuckoo_table.get_non_empty_indices()
+    print("non_empty", non_empty)
     for i in range(len(non_empty)):
         idx, val = non_empty[i]
+        print("idx val", idx, val)
         map_elem = map_on_eliptic(val, g, p, n)
         cuckoo_table.replace_at(idx, map_elem)
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
-
-
-    # Make bots by polynomial interpolation
-    for i in range(len(empty)):
-        bot_idx = empty[i]
-        num_elems=2 # The number of elements to iterpolate with
-        random_elems = select_group_elem(non_empty, num_elems)
-        bot_elem = lagrange_interpolation(random_elems, 0, p)
+    
+    
+    non_empty = cuckoo_table.get_non_empty_indices()
+    print("non_empty", non_empty)
+    # Make bots by polynomial interpolation with all true elements
+    empty = cuckoo_table.get_empty_indices()
+    for bot_idx in empty:
+        print("bot_idx", bot_idx)
+        bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
-
-    # TODO: v2 verify cuckoo table process
+        exp_bot = cuckoo_table.table[bot_idx]
+        assert0(bot_elem.y-exp_bot.y)
+    
+    
+        

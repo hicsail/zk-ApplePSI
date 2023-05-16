@@ -15,9 +15,25 @@ class CuckooTable:
 
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
+    
+    def sec_hash_one(self, item): #FIXME
+        numerator = ((99529 * item + 37309) % self.p)
+        denomitor=self.table_size
+        res = numerator * modular_inverse(denomitor, self.p) % self.p # Result of division
+        mod = numerator - denomitor * res
+        return  mod
+        # return ((99529 * item + 37309) % self.p) % self.table_size
 
     def hash_two(self, item):
         return ((86837 * item + 40637) % self.p) % self.table_size
+
+    def sec_hash_two(self, item): #FIXME
+        numerator = ((86837 * item + 40637) % self.p)
+        denomitor=self.table_size
+        res = numerator * modular_inverse(denomitor, self.p) % self.p # Result of division
+        mod = numerator - denomitor * res
+        return  mod
+        # return ((86837 * item + 40637) % self.p) % self.table_size
 
     def set_item(self, item):
         index_h1 = self.hash_one(item)
@@ -55,6 +71,13 @@ class CuckooTable:
 
     def get_non_empty_indices(self):
         return self.non_empty_indices
+    
+    def verify_hash(self):
+        for idx, val in self.non_empty_indices:
+            idx1 = self.sec_hash_one(SecretInt(val))-idx
+            idx2 = self.sec_hash_two(SecretInt(val))-idx
+            assert0(idx1*idx2)
+
 
 
 # Test the class
