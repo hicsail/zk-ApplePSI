@@ -92,6 +92,3 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         cuckoo_table.replace_at(bot_idx, bot_elem)
         exp_bot = cuckoo_table.table[bot_idx]
         assert0(bot_elem.y-exp_bot.y)
-    
-    
-        
