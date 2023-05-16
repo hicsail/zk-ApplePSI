@@ -87,7 +87,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     # Make bots by polynomial interpolation with all true elements
     empty = cuckoo_table.get_empty_indices()
     for bot_idx in empty:
-        print("bot_idx", bot_idx)
         bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
         exp_bot = cuckoo_table.table[bot_idx]
