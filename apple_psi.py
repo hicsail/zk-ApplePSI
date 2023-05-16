@@ -7,12 +7,13 @@ sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
-import random
+
 
 def remove_duplicates(secret:list): 
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
+
 
 # Verify the ECDSA signature represented by (r, s)
 def verify(r, s, hash_val, pubkey, p):
@@ -33,6 +34,7 @@ def verify(r, s, hash_val, pubkey, p):
     assert0(x_n - r)
     return xy
 
+
 # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
 def map_on_eliptic(secret, g, p, n):
 
@@ -51,10 +53,12 @@ def map_on_eliptic(secret, g, p, n):
     xy = verify(sig_r, sig_s, secret_h, pubkey, p)
     return xy
 
+
 # Instantiate EC: Curve & generator parameters
 g = ecdsa.ecdsa.generator_secp256k1
 p = g.curve().p()
 n = g.order()
+
 
 with PicoZKCompiler('picozk_test', field=[p,n]):
 
