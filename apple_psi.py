@@ -67,11 +67,11 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     print("secrets", secrets)
     
     # Make a Cuckoo table
-    size_factor = 2
-    cuckoo_table = CuckooTable(secrets, size_factor, p)
+    table_size = 2**4
+    cuckoo_table = CuckooTable(secrets, table_size, p)
 
-    #TODO: v2 ZK proof for the hash functions
-    # cuckoo_table.verify_hash()
+    # ZK proof for the hash functions
+    cuckoo_table.verify_hash()
 
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
@@ -85,9 +85,9 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
     
     
+    # Make bots by polynomial interpolation with all true elements
     non_empty = cuckoo_table.get_non_empty_indices()
     print("non_empty", non_empty)
-    # Make bots by polynomial interpolation with all true elements
     empty = cuckoo_table.get_empty_indices()
     for bot_idx in empty:
         bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
