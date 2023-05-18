@@ -30,7 +30,7 @@ def verify(r, s, hash_val, pubkey, p):
     xy2 = spk.scale(u2_p)
     xy = xy1.add(xy2)
     x_n = xy.x.to_binary().to_arithmetic(field=n)
-    assert0(x_n - r)
+    assert0(x_n - r) # ZK proof for pederson hash
     return xy
 
 
@@ -69,9 +69,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     # Make a Cuckoo table
     table_size = 2**4
     cuckoo_table = CuckooTable(secrets, table_size, p)
-
-    # ZK proof for the hash functions
-    cuckoo_table.verify_hash()
+    cuckoo_table.verify_hash() # ZK proof for the hash functions
 
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
@@ -92,4 +90,4 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
         exp_bot = cuckoo_table.table[bot_idx]
-        assert0(bot_elem.y-exp_bot.y)
+        assert0(bot_elem.y-exp_bot.y) # ZK proof for the interpolation for the bots
