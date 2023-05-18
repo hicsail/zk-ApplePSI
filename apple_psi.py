@@ -79,7 +79,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     print("non_empty", non_empty)
     for i in range(len(non_empty)):
         idx, val = non_empty[i]
-        print("idx val", idx, val)
         map_elem = map_on_eliptic(val, g, p, n)
         cuckoo_table.replace_at(idx, map_elem)
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
