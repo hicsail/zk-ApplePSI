@@ -7,8 +7,9 @@ class TestCuckoo(unittest.TestCase):
     def test_cuckoo(self):
         # Test the class
         secret = [1, 18, 3, 20, 35, 6, 7, 8, 9, 10] # The algorithm does not work if more than two 
-        size=0.7
-        table = CuckooTable(secret, size)
+        size = 0.7
+        p = 57287
+        table = CuckooTable(secret, size, p)
         print("")
         print("input", secret)
         output = table.get_table()

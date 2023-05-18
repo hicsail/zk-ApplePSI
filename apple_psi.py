@@ -1,13 +1,18 @@
 from picozk import *
 import ecdsa
 from random import randrange
-from ecdsa import numbertheory
 import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
-import random
+
+
+def remove_duplicates(secret:list): 
+    _secret = []
+    [_secret.append(x) for x in secret if x not in _secret]
+    return _secret
+
 
 # Verify the ECDSA signature represented by (r, s)
 def verify(r, s, hash_val, pubkey, p):
@@ -25,7 +30,9 @@ def verify(r, s, hash_val, pubkey, p):
     xy2 = spk.scale(u2_p)
     xy = xy1.add(xy2)
     x_n = xy.x.to_binary().to_arithmetic(field=n)
-    return x_n - r, xy
+    assert0(x_n - r) # ZK proof for pederson hash
+    return xy
+
 
 # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
 def map_on_eliptic(secret, g, p, n):
@@ -42,16 +49,9 @@ def map_on_eliptic(secret, g, p, n):
     sig_r = SecretInt(sig.r, field=n)
     sig_s = SecretInt(sig.s, field=n)
     secret_h = SecretInt(h, field=n)
-    result, xy = verify(sig_r, sig_s, secret_h, pubkey, p)
-    assert0(result)
+    xy = verify(sig_r, sig_s, secret_h, pubkey, p)
     return xy
 
-def select_group_elem(non_empty:list, n):
-    random_elems = random.sample(non_empty, n)
-    res_elems =[]
-    for el in random_elems:
-        res_elems.append(el[1])
-    return res_elems
 
 # Instantiate EC: Curve & generator parameters
 g = ecdsa.ecdsa.generator_secp256k1
@@ -59,41 +59,35 @@ p = g.curve().p()
 n = g.order()
 
 
-# User input
-num_elem = 2
-secrets = [randrange( 1, n ) for _ in range(num_elem)]
-print("secrets", secrets)
-print("")
-
-
 with PicoZKCompiler('picozk_test', field=[p,n]):
+
+    # User input
+    num_elem = 2
+    secrets = remove_duplicates([randrange( 1, n ) for _ in range(num_elem)])
+    print("secrets", secrets)
     
-    # TODO: v2 Change secrets into SecretInt
-
-
     # Make a Cuckoo table
-    size_factor = 0.7
-    cuckoo_table = CuckooTable(secrets, size_factor)
-    empty = cuckoo_table.get_empty_indices()
-    non_empty = cuckoo_table.get_non_empty_indices() 
+    table_size = 2**4
+    cuckoo_table = CuckooTable(secrets, table_size, p)
+    cuckoo_table.verify_hash() # ZK proof for the hash functions
+
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
+    non_empty = cuckoo_table.get_non_empty_indices()
+    print("non_empty", non_empty)
     for i in range(len(non_empty)):
         idx, val = non_empty[i]
         map_elem = map_on_eliptic(val, g, p, n)
         cuckoo_table.replace_at(idx, map_elem)
         cuckoo_table.set_non_emplist(i, (idx, map_elem))
-
-
-    # Make bots by polynomial interpolation
-    for i in range(len(empty)):
-        bot_idx = empty[i]
-        num_elems=2 # The number of elements to iterpolate with
-        random_elems = select_group_elem(non_empty, num_elems)
-        bot_elem = lagrange_interpolation(random_elems, 0, p)
+    
+    
+    # Make bots by polynomial interpolation with all true elements
+    non_empty = cuckoo_table.get_non_empty_indices()
+    print("non_empty", non_empty)
+    empty = cuckoo_table.get_empty_indices()
+    for bot_idx in empty:
+        bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
-
-    print("Resulting Table")
-    print(cuckoo_table.get_table())
-
-    # TODO: v2 verify cuckoo table process
+        exp_bot = cuckoo_table.table[bot_idx]
+        assert0(bot_elem.y-exp_bot.y) # ZK proof for the interpolation for the bots
