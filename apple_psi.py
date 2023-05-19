@@ -7,7 +7,6 @@ from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
 
-
 def remove_duplicates(secret:list): 
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
@@ -22,7 +21,7 @@ def verify(r, s, hash_val, pubkey, p):
 
     u1_p = u1.to_binary().to_arithmetic(field=p)
     u2_p = u2.to_binary().to_arithmetic(field=p)
-
+ 
     sg = CurvePoint(False, g.x(), g.y(), p)
     spk = CurvePoint(False, pubkey.point.x(), pubkey.point.y(), p)
 
@@ -74,7 +73,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     non_empty = cuckoo_table.get_non_empty_indices()
-    print("non_empty", non_empty)
     for i in range(len(non_empty)):
         idx, val = non_empty[i]
         map_elem = map_on_eliptic(val, g, p, n)
@@ -84,10 +82,9 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     
     # Make bots by polynomial interpolation with all true elements
     non_empty = cuckoo_table.get_non_empty_indices()
-    print("non_empty", non_empty)
     empty = cuckoo_table.get_empty_indices()
     for bot_idx in empty:
         bot_elem = lagrange_interpolation(non_empty, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
-        exp_bot = cuckoo_table.table[bot_idx]
+        exp_bot = cuckoo_table.get_item_at(bot_idx)
         assert0(bot_elem.y-exp_bot.y) # ZK proof for the interpolation for the bots
