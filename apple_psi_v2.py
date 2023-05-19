@@ -19,7 +19,7 @@ def remove_duplicates(secret:list):
 G = SECP256k1.generator
 p = SECP256k1.curve.p()
 n = SECP256k1.order
-H = p * G
+H = n * G
 alpha = randrange( 1, p )
 
 
