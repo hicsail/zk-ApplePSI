@@ -28,7 +28,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     # User input
     num_elem = 2
     secrets = remove_duplicates([randrange( 1, p ) for _ in range(num_elem)])
-    print("secrets", secrets)
     
     # Make a Cuckoo table
     table_size = 2**num_elem
