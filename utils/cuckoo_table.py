@@ -21,11 +21,11 @@ class CuckooTable:
         index_h1 = self.hash_one(item)
         index_h2 = self.hash_two(item)
         if self.table[index_h1]==None:
-            self.table[index_h1]=item
-            self.update_indices(index_h1, item)
+            self.table[index_h1]=SecretInt(item, self.p)
+            self.update_indices(index_h1)
         else:
-            self.table[index_h2]==item
-            self.update_indices(index_h2, item)
+            self.table[index_h2]=SecretInt(item, self.p)
+            self.update_indices(index_h2)
 
     def get_item_at(self, index):
         return self.table[index]
@@ -36,17 +36,23 @@ class CuckooTable:
     def set_non_emplist(self, index, item):
         self.non_empty_indices[index] = item
 
-    def update_indices(self, index, item):
+    def update_indices(self, index):
         if index in self.empty_indices:
             self.empty_indices.remove(index)
         self.non_empty_indices = [(i, self.table[i]) for i in range(self.table_size) if self.table[i] is not None]
 
-    def bulk_set(self, secret):
-        for item in secret:
+    def bulk_set(self, secrets):
+        for item in secrets:
             self.set_item(item)
 
     def get_table(self):
         return self.table
+    
+    def get_nonemp_size(self):
+        return len(self.non_empty_indices)
+
+    def get_size(self):
+        return len(self.table)
 
     def get_empty_indices(self):
         return self.empty_indices
@@ -56,6 +62,6 @@ class CuckooTable:
     
     def verify_hash(self):
         for idx, val in self.non_empty_indices:
-            idx1 = self.hash_one(SecretInt(val))-idx
-            idx2 = self.hash_two(SecretInt(val))-idx
+            idx1 = self.hash_one(val)-idx
+            idx2 = self.hash_two(val)-idx
             assert0(idx1*idx2)
