@@ -58,9 +58,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         cuckoo_table.replace_at(idx, exp_elem)
         cuckoo_table.set_non_emplist(i, (idx, exp_elem))
     
-    # TODO: Loop over secrets and confirm that group elements are made of original secrets
-
-    
     # Make bots by polynomial interpolation with all true elements
     non_emplist = cuckoo_table.get_non_emplist()
     emptyList = cuckoo_table.get_empty_indices()
@@ -68,12 +65,15 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         bot_elem = lagrange_interpolation(non_emplist, bot_idx, p)
         cuckoo_table.replace_at(bot_idx, bot_elem)
         exp_bot = cuckoo_table.get_item_at(bot_idx)
+        # ZK proof for the interpolation for the bots
         check_bots = bot_elem.x-exp_bot.x
-        assert0(SecretInt(check_bots)) # ZK proof for the interpolation for the bots
+        assert0(SecretInt(check_bots))
     
     # Permutation proof
     permutation=cuckoo_table.get_size()-(len(non_emplist)+len(emptyList))
     assert0(SecretInt(permutation))
+
+
     # TODO: Add table vs table assertion (Both bots and real values)
 
     # TODO: Modularize the function so apple cn plug in secrets, alpha, G and H
