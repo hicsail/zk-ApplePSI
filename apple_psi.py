@@ -5,8 +5,8 @@ from random import randrange
 import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
-from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
+from pedersen_hash import pedersen_hash
 
 def remove_duplicates(secret:list): 
     _secret = []
@@ -41,23 +41,21 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     table_size = 2**len(secrets)
     cuckoo_table = CuckooTable(secrets, table_size, p)
 
+
     # ZK proof for the hash functions and that the non-empty is made out of the original secrets
     cuckoo_table.verify_non_emplist(secret_data)
 
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     non_emplist = cuckoo_table.get_non_emplist()
-    x_cor = SecretInt(G.x())
-    y_cor = SecretInt(G.y())
     for i in range(len(non_emplist)):
         idx, _ = non_emplist[i]
-        secret = cuckoo_table.get_item_at(idx)*alpha
-        _secret = secret.to_binary().to_arithmetic(field=p)
-        map_elem = CurvePoint(False, x_cor, y_cor, p)
-        exp_elem = map_elem.scale(_secret) # TODO:FIXME we probably need more strict hash function
+        secret = cuckoo_table.get_item_at(idx).to_binary()
+        exp_elem = pedersen_hash(secret, p)
         cuckoo_table.replace_at(idx, exp_elem)
         cuckoo_table.set_non_emplist(i, (idx, exp_elem))
     
+
     # Make bots by polynomial interpolation with all true elements
     non_emplist = cuckoo_table.get_non_emplist()
     emptyList = cuckoo_table.get_empty_indices()
@@ -69,6 +67,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         check_bots = bot_elem.x-exp_bot.x
         assert0(SecretInt(check_bots))
     
+
     # Permutation proof
     permutation=cuckoo_table.get_size()-(len(non_emplist)+len(emptyList))
     assert0(SecretInt(permutation))
