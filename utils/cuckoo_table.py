@@ -8,7 +8,7 @@ class CuckooTable:
         self.table_size = table_size
         self.table = [None] * self.table_size
         self.empty_indices = list(range(self.table_size))
-        self.non_empty_indices = []
+        self.non_emplist = []
         self.bulk_set(secrets)
 
     def hash_one(self, item):
@@ -34,12 +34,12 @@ class CuckooTable:
         self.table[index]=item
     
     def set_non_emplist(self, index, item):
-        self.non_empty_indices[index] = item
+        self.non_emplist[index] = item
 
     def update_indices(self, index):
         if index in self.empty_indices:
             self.empty_indices.remove(index)
-        self.non_empty_indices = [(i, self.table[i]) for i in range(self.table_size) if self.table[i] is not None]
+        self.non_emplist = [(i, self.table[i]) for i in range(self.table_size) if self.table[i] is not None]
 
     def bulk_set(self, secrets):
         for item in secrets:
@@ -49,7 +49,10 @@ class CuckooTable:
         return self.table
     
     def get_nonemp_size(self):
-        return len(self.non_empty_indices)
+        return len(self.non_emplist)
+
+    def get_emp_size(self):
+        return len(self.empty_indices)
 
     def get_size(self):
         return len(self.table)
@@ -57,11 +60,22 @@ class CuckooTable:
     def get_empty_indices(self):
         return self.empty_indices
 
-    def get_non_empty_indices(self):
-        return self.non_empty_indices
+    def get_non_emplist(self):
+        return self.non_emplist
     
-    def verify_hash(self):
-        for idx, val in self.non_empty_indices:
-            idx1 = self.hash_one(val)-idx
-            idx2 = self.hash_two(val)-idx
-            assert0(idx1*idx2)
+    def verify_non_emplist(self, secrets):
+        curr_state = 1
+        final_state = 0
+        
+        # Proof that each element in the original secret list exists in non-emp list
+        for secret in secrets:
+            for _, val in self.non_emplist:
+                curr_state = mux(curr_state==final_state, final_state, mux(val==secret, final_state, curr_state))
+            assert0(curr_state) 
+        
+        # Each non emptylist element exist in the indexed position of the table
+        for idx, val in self.non_emplist:
+            assert0(val- self.get_item_at(idx))
+        
+        # And no other values exists in the non-empty list than original secrets
+        assert0(SecretInt(self.get_nonemp_size() - len(secrets)))
