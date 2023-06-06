@@ -83,7 +83,7 @@ pip install .
 You can run your python script in docker shell and compile by picozk in the following command. 
 
 ```
-/bin/bash ./run_emp.sh -f apple_psi 
+/bin/bash ./run_IR0.sh -f apple_psi 
 ```
 
 This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a><br>
