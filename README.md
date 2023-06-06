@@ -73,7 +73,7 @@ make install
 Clone the repository and then install with `pip install`:
 
 ```
-git clone git@github.com:uvm-plaid/picozk.git
+git clone git@github.mit.edu:sieve-all/picozk.git
 cd picozk
 pip install .
 ```
