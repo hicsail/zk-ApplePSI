@@ -54,7 +54,7 @@ class CuckooTable:
     def get_non_emplist(self):
         return self.non_emplist
     
-    def verify_non_emplist(self, secrets):
+    def permutation_proof(self, secrets):
         curr_state = 1
         final_state = 0
         
@@ -70,3 +70,14 @@ class CuckooTable:
         
         # And no other values exists in the non-empty list than original secrets
         assert0(SecretInt(len(self.non_emplist) - len(secrets)))
+
+        # All bots pos are None
+        bot_state = 0
+        error_state = 1
+        for bot in self.empty_indices:
+            bot_state = mux(self.table[bot]==None, bot_state, error_state)
+        assert0(SecretInt(bot_state))
+
+        # The cuckoo table contains only real-values and bots in empty list
+        perm_check=self.get_size()-(len(self.empty_indices)+len(self.non_emplist))
+        assert0(SecretInt(perm_check))

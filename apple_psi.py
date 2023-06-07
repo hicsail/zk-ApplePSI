@@ -1,7 +1,7 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from ecdsa import SECP256k1
-from random import randrange
+
 import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
@@ -42,8 +42,15 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     cuckoo_table = CuckooTable(secrets, table_size, p)
 
 
-    # ZK proof for the hash functions and that the non-empty is made out of the original secrets
-    cuckoo_table.verify_non_emplist(secret_data)
+    # ZK proof for the hash functions, that the non-empty is made out of the original secrets
+    cuckoo_table.permutation_proof(secret_data)
+
+
+    # Permutation proof
+    non_emplist = cuckoo_table.get_non_emplist()
+    emptyList = cuckoo_table.get_empty_indices()
+    permutation=cuckoo_table.get_size()-(len(non_emplist)+len(emptyList))
+    assert0(SecretInt(permutation))
 
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
@@ -52,6 +59,8 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         idx, _ = non_emplist[i]
         secret = cuckoo_table.get_item_at(idx).to_binary()
         exp_elem = pedersen_hash(secret, p)
+        # exp_elem = exp_elem.scale(SecretInt(alpha))
+        exp_elem = exp_elem.scale(SecretInt(alpha))
         cuckoo_table.replace_at(idx, exp_elem)
         cuckoo_table.set_non_emplist(i, (idx, exp_elem))
     
@@ -67,11 +76,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         check_bots = bot_elem.x-exp_bot.x
         assert0(SecretInt(check_bots))
     
-
-    # Permutation proof
-    permutation=cuckoo_table.get_size()-(len(non_emplist)+len(emptyList))
-    assert0(SecretInt(permutation))
-
 
     # TODO: Add table vs table assertion (Both bots and real values)
 
