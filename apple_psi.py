@@ -8,12 +8,12 @@ from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
 from pedersen_hash import pedersen_hash
+from test_data import makeCuckoo
 
 def remove_duplicates(secret:list): 
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
-
 
 #  Apple input: Curve & generator parameters
 secrets = [114303190253219474269384419659897947128561637493978467700760475363248655921884, 47452005787557361733223600541610643778646485287733815210507547468435601040849]
@@ -57,13 +57,6 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     cuckoo_table.permutation_proof(secret_data)
 
 
-    # Permutation proof
-    non_emplist = cuckoo_table.get_non_emplist()
-    emptyList = cuckoo_table.get_empty_indices()
-    permutation=cuckoo_table.get_size()-(len(non_emplist)+len(emptyList))
-    assert0(SecretInt(permutation))
-
-
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     non_emplist = cuckoo_table.get_non_emplist()
     for i in range(len(non_emplist)):
@@ -87,6 +80,9 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
         assert0(SecretInt(check_bots))
     
 
-    # TODO: Add table vs table assertion (Both bots and real values)
+    # table vs table assertion (Both bots and real values)
+
+    test_cuckoo_table = makeCuckoo()
+    cuckoo_table.reconcile(test_cuckoo_table)
 
     # TODO: Modularize the function so apple cn plug in secrets, alpha

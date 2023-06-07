@@ -53,7 +53,7 @@ class CuckooTable:
 
     def get_non_emplist(self):
         return self.non_emplist
-    
+
     def permutation_proof(self, secrets):
         curr_state = 1
         final_state = 0
@@ -81,3 +81,23 @@ class CuckooTable:
         # The cuckoo table contains only real-values and bots in empty list
         perm_check=self.get_size()-(len(self.empty_indices)+len(self.non_emplist))
         assert0(SecretInt(perm_check))
+
+    def reconcile(self, test_table):
+        assert0(SecretInt(self.get_size() - test_table.get_size()))
+        
+        # Reconciling real values
+        for idx, val in test_table.get_non_emplist():
+            a = self.get_item_at(idx)
+            print("apl x:", a.x)
+            print("Orig x:", val.x)
+            print("apl y:", a.y)
+            print("Orig y:", val.y)
+
+            assert0(self.get_item_at(idx).x-val.x)
+            assert0(self.get_item_at(idx).y-val.y)
+        
+        # Reconciling bots
+        for idx in test_table.get_empty_indices():
+            print("self.get_item_at(idx).y", self.get_item_at(idx).y)
+            print("test_table.get_item_at(idx).y", test_table.get_item_at(idx).y)
+            assert0(self.get_item_at(idx).y-test_table.get_item_at(idx).y)
