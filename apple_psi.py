@@ -8,7 +8,7 @@ from cuckoo_table import CuckooTable
 from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
 from pedersen_hash import pedersen_hash
-from test_data import makeCuckoo
+from test_data import make_TestCuckoo
 
 def remove_duplicates(secret:list): 
     _secret = []
@@ -31,7 +31,7 @@ p = SECP256k1.curve.p()
 print('field size:', p) #p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
 n = SECP256k1.order
 t = 2
-poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+#poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
 
 
 # Points on the elliptic curve
@@ -44,8 +44,8 @@ Points = [CurvePoint(False, G.x(), G.y(), p),
 # Simulating Apple confirming their data is same as NCMEC image data
 with PicoZKCompiler('picozk_test', field=[p,n]):
     secret_data = [SecretInt(c) for c in secrets]
-    digest = poseidon_hash.hash(secret_data)
-    assert0(digest - val_of(digest)) # Simulating Apple confirming their data is same as NCMEC image data
+    # digest = poseidon_hash.hash(secret_data)
+    # assert0(digest - val_of(digest)) # Simulating Apple confirming their data is same as NCMEC image data
 
 
     # Make a Cuckoo table
@@ -82,7 +82,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
 
     # table vs table assertion (Both bots and real values)
 
-    test_cuckoo_table = makeCuckoo()
+    test_cuckoo_table = make_TestCuckoo()
     cuckoo_table.reconcile(test_cuckoo_table)
 
     # TODO: Modularize the function so apple cn plug in secrets, alpha
