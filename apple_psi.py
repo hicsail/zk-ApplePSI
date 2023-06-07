@@ -5,6 +5,7 @@ from ecdsa import SECP256k1
 import sys
 sys.path.insert(1, './utils')
 from cuckoo_table import CuckooTable
+from curvepoint import CurvePoint
 from interpolation import lagrange_interpolation
 from pedersen_hash import pedersen_hash
 
@@ -20,11 +21,25 @@ secrets = remove_duplicates(secrets)
 alpha = 5
 
 # Other parameters
+G = SECP256k1.generator
+G2 = 2*G
+G3 = 3*G
+G4 = 4*G
+G5 = 5*G
+
 p = SECP256k1.curve.p()
 print('field size:', p) #p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
 n = SECP256k1.order
 t = 2
 poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+
+
+# Points on the elliptic curve
+Points = [CurvePoint(False, G.x(), G.y(), p),
+        CurvePoint(False, G2.x(), G2.y(), p),
+        CurvePoint(False, G3.x(), G3.y(), p),
+        CurvePoint(False, G4.x(), G4.y(), p),
+        CurvePoint(False, G5.x(), G5.y(), p)]
 
 # Simulating Apple confirming their data is same as NCMEC image data
 with PicoZKCompiler('picozk_test', field=[p,n]):
@@ -54,8 +69,7 @@ with PicoZKCompiler('picozk_test', field=[p,n]):
     for i in range(len(non_emplist)):
         idx, _ = non_emplist[i]
         secret = cuckoo_table.get_item_at(idx).to_binary()
-        exp_elem = pedersen_hash(secret, p)
-        # exp_elem = exp_elem.scale(SecretInt(alpha))
+        exp_elem = pedersen_hash(secret, Points, p)
         exp_elem = exp_elem.scale(SecretInt(alpha))
         cuckoo_table.replace_at(idx, exp_elem)
         cuckoo_table.set_non_emplist(i, (idx, exp_elem))
