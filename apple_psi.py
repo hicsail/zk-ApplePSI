@@ -15,26 +15,20 @@ def remove_duplicates(secret:list):
 
 
 #  Apple input: Curve & generator parameters
-G = SECP256k1.generator
 p = SECP256k1.curve.p()
 print('field size:', p) #p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
 n = SECP256k1.order
-
-s = 5
-H = s*G #TODO:FIXME Replace with the real pedersen hash
-
 t = 2
 alpha = 5
-# poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
 secrets = [114303190253219474269384419659897947128561637493978467700760475363248655921884, 47452005787557361733223600541610643778646485287733815210507547468435601040849]
 secrets = remove_duplicates(secrets)
 
 # Simulating Apple confirming their data is same as NCMEC image data
 with PicoZKCompiler('picozk_test', field=[p,n]):
-    # TODO:FIXME Uncomment
     secret_data = [SecretInt(c) for c in secrets]
-    # digest = poseidon_hash.hash(secret_data)
-    # assert0(digest - val_of(digest)) # Simulating Apple confirming their data is same as NCMEC image data
+    digest = poseidon_hash.hash(secret_data)
+    assert0(digest - val_of(digest)) # Simulating Apple confirming their data is same as NCMEC image data
 
 
     # Make a Cuckoo table
