@@ -52,8 +52,8 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, test_cuckoo_table):
         cuckoo_table.set_table_at(bot_idx, bot_elem)
         exp_bot = cuckoo_table.get_item_at(bot_idx)
         # ZK proof for the interpolation for the bots
-        check_bots = bot_elem.x-exp_bot.x
-        assert0(SecretInt(check_bots))
+        check_bots = (bot_elem.x-exp_bot.x) + (bot_elem.y-exp_bot.y)
+        assert0(check_bots)
     
 
     # table vs table assertion (Both bots and real values)
