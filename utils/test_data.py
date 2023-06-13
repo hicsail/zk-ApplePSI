@@ -50,7 +50,6 @@ def make_TestCuckoo():
         secret = test_cuckoo_table.get_item_at(idx).to_binary()
         exp_elem = pedersen_hash(secret, Points, p)
         exp_elem = exp_elem.scale(SecretInt(alpha))
-        test_cuckoo_table.replace_at(idx, exp_elem)
         test_cuckoo_table.set_non_emplist(i, (idx, exp_elem))
 
 
@@ -59,6 +58,6 @@ def make_TestCuckoo():
     emptyList = test_cuckoo_table.get_empty_indices()
     for bot_idx in emptyList:
         bot_elem = lagrange_interpolation(non_emplist, bot_idx, p)
-        test_cuckoo_table.replace_at(bot_idx, bot_elem)
+        test_cuckoo_table.set_table_at(bot_idx, bot_elem)
 
     return test_cuckoo_table
