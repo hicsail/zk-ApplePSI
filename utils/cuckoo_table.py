@@ -93,5 +93,5 @@ class CuckooTable:
         
         # Reconciling bots
         for idx in test_table.get_empty_indices():
-            assert(self.get_item_at(idx).x==test_table.get_item_at(idx).x)
+            assert0(self.get_item_at(idx).x-test_table.get_item_at(idx).x)
             assert0(self.get_item_at(idx).y-test_table.get_item_at(idx).y)
