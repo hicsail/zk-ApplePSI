@@ -1,16 +1,17 @@
-from picozk import *
-from curvepoint import CurvePoint
+from sympy import symbols, expand
 
-def lagrange_interpolation(points:list[CurvePoint], x, p):
-    n = len(points)
-    result = CurvePoint(False, x, 0, p)
+def lagrange_polynomial(x_values, y_values):
+    x = symbols('x')  # define the variable
+    n = len(x_values)
+    L = 0  # Initialize Lagrange polynomial
 
     for i in range(n):
-        term = points[i][1]
+        term = 1
         for j in range(n):
-            if j != i:
-                a = ((x - points[j][1].x) * modular_inverse(points[i][1].x - points[j][1].x, p)) % p
-                term = term.scale(a)
-        result = result.add(term)
-
-    return result
+            if i != j:
+                term *= (x - x_values[j]) / (x_values[i] - x_values[j])
+        print("i:", i)
+        print("y_values", y_values[i])
+        L +=  y_values[i] * term
+    
+    return expand(L)
