@@ -19,7 +19,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         idx, _ = non_emplist[i]
         secret = cuckoo_table.get_item_at(idx)
         elm = pedersen_hash(secret, Points, p)
-        # elm = elm.scale(alpha)
+        # elm = elm.scale(alpha) #TODO: Exponentiate the group element by alpha
         cuckoo_table.set_table_at(idx, elm)
 
     # Make x list and y list
@@ -28,7 +28,6 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
     for idx, _ in cuckoo_table.non_emplist:
         gelm = cuckoo_table.get_item_at(idx)
-        print("gelm[1]", gelm[1])
         xs.append(idx)
         ys.append(gelm[1]) # TODO: Change this to group operation
 

@@ -14,7 +14,7 @@ def remove_duplicates(secret:list):
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
 
-def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table):
+def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
 
     # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
     # secret_data = [SecretInt(c) for c in apple_secrets]
@@ -35,7 +35,7 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table):
 
         #TODO: hash_to_curve(val)^alpha exists in the cuckoo_table at location hash_one(val) or hash_two(val)
 
-    # TODO: Assert that all elements are on the curve drew by lagrange
+    # TODO: Assert that all elements are on the same curve drew by lagrange
 
     
 
@@ -82,7 +82,7 @@ def main():
                 CurvePoint(False, G5.x(), G5.y(), p)]
 
 
-        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table)
+        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
 
 if __name__ == "__main__":
     main()
