@@ -5,7 +5,6 @@ from ecdsa import SECP256k1
 import sys
 sys.path.insert(1, './utils')
 from curvepoint import CurvePoint
-from interpolation import lagrange_polynomial
 from pedersen_hash import pedersen_hash
 from test_data import make_Cuckoo
 
@@ -35,7 +34,7 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
 
         #TODO: hash_to_curve(val)^alpha exists in the cuckoo_table at location hash_one(val) or hash_two(val)
 
-    # TODO: Assert that all elements are on the same curve drew by lagrange
+    # TODO: Assert that all elements are on the same curve drawn by lagrange
 
     
 
@@ -47,9 +46,6 @@ def main():
     ncmec_secrets = [114303190253219474269384419659897947128561637493978467700760475363248655921884, 47452005787557361733223600541610643778646485287733815210507547468435601040849]
     ncmec_secrets = remove_duplicates(ncmec_secrets)
     
-    alpha = 5
-    t = 2
-
     p = SECP256k1.curve.p() #p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
 
@@ -60,28 +56,28 @@ def main():
     G4 = 4*G
     G5 = 5*G
 
-    Points = [G, G2, G3, G4, G5]
-
-    epsilon=1
-    cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
-
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler('picozk_test', field=[p,n]):
+        alpha = 5
+        t = 2
     #     # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
     #     # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
     #     # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
         ncmec_digest = None
-        
-        # Make Secrets
-        alpha=SecretInt(alpha)
-        apple_secrets = [SecretInt(c) for c in apple_secrets]
+
         Points = [CurvePoint(False, G.x(), G.y(), p),
                 CurvePoint(False, G2.x(), G2.y(), p),
                 CurvePoint(False, G3.x(), G3.y(), p),
                 CurvePoint(False, G4.x(), G4.y(), p),
                 CurvePoint(False, G5.x(), G5.y(), p)]
 
-
+        # Make Cuckoo Table
+        epsilon=1
+        cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+        
+        # Make Secrets
+        alpha=SecretInt(alpha)
+        apple_secrets = [SecretInt(c) for c in apple_secrets]
         apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
 
 if __name__ == "__main__":
