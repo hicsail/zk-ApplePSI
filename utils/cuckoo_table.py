@@ -21,7 +21,7 @@ class CuckooTable:
     def hash_two(self, item):
         return ((86837 * item + 40637) % self.p) % self.table_size
 
-    def set_item(self, item): #TODO: Implement eviction
+    def set_item(self, item):
         index_h1 = self.hash_one(item)
         index_h2 = self.hash_two(item)
         if self.table[index_h1]==None:

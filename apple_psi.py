@@ -7,6 +7,7 @@ sys.path.insert(1, './utils')
 from curvepoint import CurvePoint
 from pedersen_hash import pedersen_hash
 from test_data import make_Cuckoo
+from interpolation import compute_y
 
 def remove_duplicates(secret:list): 
     _secret = []
@@ -47,6 +48,10 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         
     
     # TODO: Prove that all elements are on the same curve drawn by lagrange
+    for idx, val in enumerate(cuckoo_table.table):
+        res = compute_y(i, poly)
+        assert0(res.x-val.x)
+        assert0(res.y-val.y)
 
     # Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
     assert(len(non_emplist)-len(poly)==0)
