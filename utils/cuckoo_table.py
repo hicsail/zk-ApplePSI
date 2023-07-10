@@ -14,6 +14,7 @@ class CuckooTable:
     def bulk_set(self, secrets):
         for item in secrets:
             self.set_item(item)
+        self.update_indices()
 
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
@@ -22,19 +23,28 @@ class CuckooTable:
         return ((86837 * item + 40637) % self.p) % self.table_size
 
     def set_item(self, item):
-        index_h1 = self.hash_one(item)
-        index_h2 = self.hash_two(item)
-        if self.table[index_h1]==None:
-            self.table[index_h1]=SecretInt(item, self.p)
-            self.update_indices(index_h1)
-        else:
-            self.table[index_h2]=SecretInt(item, self.p)
-            self.update_indices(index_h2)
+        for _ in range(self.table_size):  # Limit the number of relocations to avoid infinite loops
+            # Calculate the hash values
+            index_h1 = self.hash_one(item)
+            index_h2 = self.hash_two(item)
 
-    def update_indices(self, index):
-        if index in self.empty_indices:
-            self.empty_indices.remove(index)
-        self.non_emplist = [(i, self.table[i]) for i in range(self.table_size) if self.table[i] is not None]
+            # If either location is available, place the item there
+            # If neither location is available, evict and relocate the item in the second
+            if self.table[index_h1] == None:
+                self.table[index_h1] = SecretInt(item, self.p)
+                return
+            elif self.table[index_h2] == None:
+                self.table[index_h2] = SecretInt(item, self.p)
+                return
+            else:
+                item, self.table[index_h2] = self.table[index_h2], SecretInt(item, self.p)
+
+    def update_indices(self):
+        for index in range(len(self.table)):
+            if index in self.empty_indices:
+                self.empty_indices.remove(index)
+            if self.table[index] is not None:
+                self.non_emplist.append((index, self.table[index]))
 
     def get_item_at(self, index):
         return self.table[index]
@@ -47,3 +57,12 @@ class CuckooTable:
 
     def get_non_emplist(self):
         return self.non_emplist
+    
+# index_h1 = self.hash_one(item)
+# index_h2 = self.hash_two(item)
+# if self.table[index_h1]==None:
+#     self.table[index_h1]=SecretInt(item, self.p)
+#     self.update_indices(index_h1)
+# else:
+#     self.table[index_h2]=SecretInt(item, self.p)
+#     self.update_indices(index_h2)

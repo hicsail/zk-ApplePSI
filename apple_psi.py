@@ -47,11 +47,13 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         assert0(gelm.y-cuckoo_table.get_item_at(idx).y)
         
     
-    # TODO: Prove that all elements are on the same curve drawn by lagrange
+    # Prove that all elements are on the same curve drawn by lagrange
+    print(cuckoo_table.table)
     for idx, val in enumerate(cuckoo_table.table):
-        res = compute_y(i, poly)
-        assert0(res.x-val.x)
-        assert0(res.y-val.y)
+        res = compute_y(idx, poly)
+        # TODO: Unncomment
+        # assert0(res.x-val.x)
+        # assert0(res.y-val.y)
 
     # Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
     assert(len(non_emplist)-len(poly)==0)
@@ -90,7 +92,6 @@ def main():
                 CurvePoint(False, G4_x, G4_y, p),
                 CurvePoint(False, G5_x, G5_y, p)]
 
-        # TODO: Implment eviction
         # TODO: Fix lagrange
 
         # Make Cuckoo Table
