@@ -1,3 +1,4 @@
+import copy
 # def pedersen_hash(M, Points, p):
 
 #     num_bits = M.bit_length()
@@ -48,7 +49,8 @@ def pedersen_hash(M, Points, p):
     b_high = b_high.to_arithmetic(field=p)
 
     # Calculate the sum
-    result = Points[0]
+    result = copy.deepcopy(Points[0])
+
     result.x = result.x + a_low.val * Points[1].x
     result.x = result.x + a_high.val * Points[2].x
     result.x = result.x + b_low.val * Points[3].x

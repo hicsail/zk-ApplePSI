@@ -28,27 +28,28 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     final_state = 0
     for idx, val in non_emplist:
         curr_state = 1
-        for idx in range(len(apple_secrets)):
-            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[idx]==val, curr_state, final_state))
+        for i in range(len(apple_secrets)):
+            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, curr_state, final_state))
         assert0(curr_state)
 
         
-        # Prove the element exists at the index of either hash_one or _two
+        # Prove that hash_to_curve(val)^alpha exists in the cuckoo_table at location hash_one(val) or hash_two(val)
         h1 = cuckoo_table.hash_one(val)
         h2 = cuckoo_table.hash_two(val)
         assert0((h1-idx)*(h2-idx))
 
-        # TODO: hash_to_curve(val)^alpha exists in the cuckoo_table at location hash_one(val) or hash_two(val)
-        gelm = pedersen_hash(val.to_binary(), Points, p)
+        val = val.to_binary()
+        gelm = pedersen_hash(val, Points, p)
         gelm = gelm.scale(alpha)
+        
         assert0(gelm.x-cuckoo_table.get_item_at(idx).x)
+        assert0(gelm.y-cuckoo_table.get_item_at(idx).y)
         
     
     # TODO: Prove that all elements are on the same curve drawn by lagrange
 
-    # Assert that len(non_emplist_items) == d+1
+    # Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
     assert(len(non_emplist)-len(poly)==0)
-    # TODO: Implment eviction
     
 
 def main():
@@ -83,6 +84,9 @@ def main():
                 CurvePoint(False, G3_x, G3_y, p),
                 CurvePoint(False, G4_x, G4_y, p),
                 CurvePoint(False, G5_x, G5_y, p)]
+
+        # TODO: Implment eviction
+        # TODO: Fix lagrange
 
         # Make Cuckoo Table
         epsilon=1

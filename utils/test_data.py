@@ -16,13 +16,11 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     non_emplist = cuckoo_table.get_non_emplist()
-    for i in range(len(non_emplist)):
-        idx, _ = non_emplist[i]
-        secret = cuckoo_table.get_item_at(idx)
+    for idx, secret in non_emplist:
         secret = secret.to_binary()
-        elm = pedersen_hash(secret, Points, p)
-        elm = elm.scale(SecretInt(alpha))
-        cuckoo_table.set_table_at(idx, elm)
+        gelm = pedersen_hash(secret, Points, p)
+        gelm = gelm.scale(SecretInt(alpha))
+        cuckoo_table.set_table_at(idx, gelm)
 
     # Make x list and y list
     xs = []
