@@ -17,10 +17,9 @@ def remove_duplicates(secret:list):
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
 
     # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
-    # secret_data = [SecretInt(c) for c in apple_secrets]
     # t = 2
     # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-    # apple_digest = poseidon_hash.hash(secret_data)
+    # apple_digest = poseidon_hash.hash(apple_secrets)
     # assert0(ncmec_digest - val_of(apple_digest))
 
 
@@ -48,7 +47,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         
     
     # Prove that all elements are on the same curve drawn by lagrange
-    print(cuckoo_table.table)
     for idx, val in enumerate(cuckoo_table.table):
         res = compute_y(idx, poly)
         # TODO: Unncomment
@@ -80,10 +78,10 @@ def main():
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler('picozk_test', field=[p,n]):
         alpha = 5
-        t = 2
-    #     # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-    #     # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
-    #     # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        # t = 2
+        # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+        # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
+        # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
         ncmec_digest = None
 
         Points = [CurvePoint(False, G1_x, G1_y, p),
