@@ -81,7 +81,6 @@ def main():
         poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
-        ncmec_digest = None
 
         Points = [CurvePoint(False, G1_x, G1_y, p),
                 CurvePoint(False, G2_x, G2_y, p),
