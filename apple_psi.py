@@ -7,14 +7,14 @@ sys.path.insert(1, './utils')
 from curvepoint import CurvePoint
 from pedersen_hash import pedersen_hash
 from test_data import make_Cuckoo
-from interpolation import compute_y
+from interpolation import lagrange_interpolation
 
 def remove_duplicates(secret:list): 
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
 
-def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
+def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, xs, ys):
 
     # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
     # t = 2
@@ -33,28 +33,30 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         assert0(curr_state)
 
         
-        # Prove that hash_to_curve(val)^alpha exists in the cuckoo_table at location hash_one(val) or hash_two(val)
+        # Prove that each real element exists in hash one or two
         h1 = cuckoo_table.hash_one(val)
         h2 = cuckoo_table.hash_two(val)
         assert0((h1-idx)*(h2-idx))
 
+        # Prove that hash_to_curve(val)^alpha is performed appropriately
         val = val.to_binary()
-        gelm = pedersen_hash(val, Points, p)
-        gelm = gelm.scale(alpha)
-        
-        assert0(gelm.x-cuckoo_table.get_item_at(idx).x)
-        assert0(gelm.y-cuckoo_table.get_item_at(idx).y)
-        
+        _gelm = pedersen_hash(val, Points, p)
+        _gelm = _gelm.scale(alpha)
+        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
+        assert(gelm==cuckoo_table.get_item_at(idx))
     
     # Prove that all elements are on the same curve drawn by lagrange
+    print(cuckoo_table.table)
     for idx, val in enumerate(cuckoo_table.table):
-        res = compute_y(idx, poly)
-        # TODO: Unncomment
-        # assert0(res.x-val.x)
-        # assert0(res.y-val.y)
+        _gelm = lagrange_interpolation(xs, ys, idx, p)
+        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
+        print("gelm", gelm)
+        print("table", cuckoo_table.get_item_at(idx))
+        print("")
+        assert(gelm==cuckoo_table.get_item_at(idx)) #TODO: FIXME This gets error at the index 2
 
-    # Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
-    assert(len(non_emplist)-len(poly)==0)
+    # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
+    # assert(len(non_emplist)-len(poly)==0)
     
 
 def main():
@@ -90,16 +92,16 @@ def main():
                 CurvePoint(False, G4_x, G4_y, p),
                 CurvePoint(False, G5_x, G5_y, p)]
 
-        # TODO: Fix lagrange
+        # TODO: Fix lagrange and curve point
 
         # Make Cuckoo Table
         epsilon=1
-        cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+        cuckoo_table, xs, ys = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
-        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
+        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, xs, ys)
 
 if __name__ == "__main__":
     main()

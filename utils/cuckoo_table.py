@@ -41,10 +41,9 @@ class CuckooTable:
 
     def update_indices(self):
         for index in range(len(self.table)):
-            if index in self.empty_indices:
-                self.empty_indices.remove(index)
             if self.table[index] is not None:
                 self.non_emplist.append((index, self.table[index]))
+                self.empty_indices.remove(index)
 
     def get_item_at(self, index):
         return self.table[index]

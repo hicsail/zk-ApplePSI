@@ -1,6 +1,6 @@
 from cuckoo_table import CuckooTable
 from pedersen_hash import pedersen_hash
-from interpolation import lagrange_polynomial, compute_y
+from interpolation import lagrange_interpolation
 from picozk import *
 
 def remove_duplicates(secret:list): 
@@ -18,9 +18,9 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     non_emplist = cuckoo_table.get_non_emplist()
     for idx, secret in non_emplist:
         secret = secret.to_binary()
-        gelm = pedersen_hash(secret, Points, p)
-        gelm = gelm.scale(SecretInt(alpha))
-        cuckoo_table.set_table_at(idx, gelm)
+        _gelm = pedersen_hash(secret, Points, p)
+        _gelm = _gelm.scale(SecretInt(alpha))
+        cuckoo_table.set_table_at(idx, _gelm)
 
     # Make x list and y list
     xs = []
@@ -31,14 +31,16 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         xs.append(idx)
         ys.append(gelm)
 
-    # Construct polynomial
-    poly = lagrange_polynomial(xs, ys)
-
     # Calculate bots by the polynomial above
     emptyList = cuckoo_table.get_empty_indices()
     for bot_idx in emptyList:
-        # p = poly.subs('x', bot_idx)
-        p = compute_y(bot_idx, poly)
-        cuckoo_table.set_table_at(bot_idx, p)
+        poly = lagrange_interpolation(xs, ys, bot_idx, p)
+        cuckoo_table.set_table_at(bot_idx, poly)
 
-    return cuckoo_table, poly
+    # Open values and save as normal group elements
+    for idx in range(len(cuckoo_table.table)):
+        _gelm = cuckoo_table.get_item_at(idx)
+        gelm = (val_of(_gelm.x),val_of(_gelm.y))
+        cuckoo_table.set_table_at(idx, gelm)
+
+    return cuckoo_table, xs, ys
