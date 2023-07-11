@@ -16,11 +16,11 @@ def remove_duplicates(secret:list):
 
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, xs, ys):
 
-    # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
-    # t = 2
-    # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-    # apple_digest = poseidon_hash.hash(apple_secrets)
-    # assert0(ncmec_digest - val_of(apple_digest))
+    # Simulating Apple confirming their data is same as NCMEC image data
+    t = 2
+    poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+    apple_digest = poseidon_hash.hash(apple_secrets)
+    assert0(ncmec_digest - val_of(apple_digest))
 
 
     # Prove that the set non_emplist is a subset of the set apple_secrets
@@ -50,9 +50,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, xs, y
     for idx, val in enumerate(cuckoo_table.table):
         _gelm = lagrange_interpolation(xs, ys, idx, p)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        print("gelm", gelm)
-        print("table", cuckoo_table.get_item_at(idx))
-        print("")
         assert(gelm==cuckoo_table.get_item_at(idx)) #TODO: FIXME This gets error at the index 2
 
     # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
@@ -80,10 +77,10 @@ def main():
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler('picozk_test', field=[p,n]):
         alpha = 5
-        # t = 2
-        # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-        # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
-        # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        t = 2
+        poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+        ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
+        ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
         ncmec_digest = None
 
         Points = [CurvePoint(False, G1_x, G1_y, p),
@@ -91,8 +88,6 @@ def main():
                 CurvePoint(False, G3_x, G3_y, p),
                 CurvePoint(False, G4_x, G4_y, p),
                 CurvePoint(False, G5_x, G5_y, p)]
-
-        # TODO: Fix lagrange and curve point
 
         # Make Cuckoo Table
         epsilon=1
