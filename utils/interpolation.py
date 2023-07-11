@@ -1,16 +1,20 @@
 from picozk import *
-from curvepoint import CurvePoint
 
-def lagrange_interpolation(points:list[CurvePoint], x, p):
-    n = len(points)
-    result = CurvePoint(False, x, 0, p)
+def lagrange_interpolation(xs:list, ys:list, x, p):
+    assert(len(xs)==len(ys))
+    n = len(xs)
+    result = None
 
     for i in range(n):
-        term = points[i][1]
+        term = ys[i]
         for j in range(n):
             if j != i:
-                a = ((x - points[j][1].x) * modular_inverse(points[i][1].x - points[j][1].x, p)) % p
-                term = term.scale(a)
-        result = result.add(term)
+                a = ((x - xs[j]) * modular_inverse(xs[i] - xs[j], p)) % p
+                term = term.scale(SecretInt(a))
+
+        if result is None:
+            result = term
+        else:
+            result = result.add(term)
 
     return result
