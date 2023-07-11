@@ -56,12 +56,3 @@ class CuckooTable:
 
     def get_non_emplist(self):
         return self.non_emplist
-    
-# index_h1 = self.hash_one(item)
-# index_h2 = self.hash_two(item)
-# if self.table[index_h1]==None:
-#     self.table[index_h1]=SecretInt(item, self.p)
-#     self.update_indices(index_h1)
-# else:
-#     self.table[index_h2]=SecretInt(item, self.p)
-#     self.update_indices(index_h2)
