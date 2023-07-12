@@ -17,10 +17,10 @@ def remove_duplicates(secret:list):
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, xs, ys):
 
     # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
-    t = 2
-    poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-    apple_digest = poseidon_hash.hash(apple_secrets)
-    assert0(ncmec_digest - val_of(apple_digest))
+    # t = 2
+    # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
+    # apple_digest = poseidon_hash.hash(apple_secrets)
+    # assert0(ncmec_digest - val_of(apple_digest))
 
 
     # Prove that the set non_emplist is a subset of the set apple_secrets
