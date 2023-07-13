@@ -48,11 +48,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     for idx, val in enumerate(cuckoo_table.table):
         _gelm = poly(idx)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        print("idx",idx)
-        print("")
-        print("gelm", gelm)
-        print("table", cuckoo_table.get_item_at(idx))
-        print("")
         assert(gelm==cuckoo_table.get_item_at(idx)) #TODO: FIXME This gets error at the index 2
 
     # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
