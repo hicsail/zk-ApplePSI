@@ -3,11 +3,6 @@ from pedersen_hash import pedersen_hash
 from interpolation import lagrange_poly
 from picozk import *
 
-def remove_duplicates(secret:list): 
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
-
 def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
     # Make a Cuckoo table
