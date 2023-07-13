@@ -1,5 +1,6 @@
 from picozk import *
 from dataclasses import dataclass
+from picozk.util import encode_int
 
 @dataclass
 class CurvePoint:
@@ -35,10 +36,22 @@ class CurvePoint:
 
     # Point scaling by a scalar via repeated doubling
     def scale(self, s):
-        bits = s.to_binary()
-        res = CurvePoint(True, 0, 0, self.p)
-        temp = self
-        for b in reversed(bits.wires):
-            res = temp.add(res).mux(b.to_bool(), res)
-            temp = temp.double()
-        return res
+        if isinstance(s, ArithmeticWire):
+            bits = s.to_binary()
+            res = CurvePoint(True, 0, 0, self.p)
+            temp = self
+            for b in reversed(bits.wires):
+                res = temp.add(res).mux(b.to_bool(), res)
+                temp = temp.double()
+            return res
+        elif isinstance(s, int):
+            bits = encode_int(s, s)
+            res = CurvePoint(True, 0, 0, self.p)
+            temp = self
+            for b in reversed(bits):
+                if b:
+                    res = temp.add(res)
+                temp = temp.double()
+            return res
+        else:
+            raise Exception('Unsupported exponent:', s)

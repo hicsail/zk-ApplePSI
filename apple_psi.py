@@ -45,10 +45,16 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         assert(gelm==cuckoo_table.get_item_at(idx))
     
     # Prove that all elements are on the same curve drawn by lagrange
+    # for idx in cuckoo_table.get_empty_indices(): #TODO: FIXME This gets error at the index 2 (non-bot value) if I run through the entire table by for idx, val in enumerate(cuckoo_table.table):
     for idx, val in enumerate(cuckoo_table.table):
         _gelm = poly(idx)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        assert(gelm==cuckoo_table.get_item_at(idx)) #TODO: FIXME This gets error at the index 2
+        print("idx",idx)
+        print("")
+        print("gelm", gelm)
+        print("table", cuckoo_table.get_item_at(idx))
+        print("")
+        assert(gelm==cuckoo_table.get_item_at(idx))
 
     # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
     # assert(len(non_emplist)-len(poly)==0)
