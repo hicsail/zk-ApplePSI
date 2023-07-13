@@ -14,7 +14,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     for idx, secret in non_emplist:
         secret = secret.to_binary()
         _gelm = pedersen_hash(secret, Points, p)
-        _gelm = _gelm.scale(SecretInt(alpha))
+        _gelm = _gelm.scale(alpha)
         cuckoo_table.set_table_at(idx, _gelm)
 
     # Make x list and y list
