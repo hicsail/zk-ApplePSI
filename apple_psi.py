@@ -16,10 +16,9 @@ def remove_duplicates(secret:list):
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
 
     # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
-    # t = 2
-    # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-    # apple_digest = poseidon_hash.hash(apple_secrets)
-    # assert0(ncmec_digest - val_of(apple_digest))
+    poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
+    apple_digest = poseidon_hash.hash(apple_secrets)
+    assert0(ncmec_digest - val_of(apple_digest))
 
 
     # Prove that the set non_emplist is a subset of the set apple_secrets
@@ -49,11 +48,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     for idx, val in enumerate(cuckoo_table.table):
         _gelm = poly(idx)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        print("idx",idx)
-        print("")
-        print("gelm", gelm)
-        print("table", cuckoo_table.get_item_at(idx))
-        print("")
         assert(gelm==cuckoo_table.get_item_at(idx))
 
     # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
@@ -71,7 +65,7 @@ def main():
     p = SECP256k1.curve.p() #p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
 
-    # Points on the elliptic curve
+    # TODO: Update the consts - Points on the elliptic curve
     G1_x, G1_y= 2089986280348253421170679821480865132823066470938446095505822317253594081284,1713931329540660377023406109199410414810705867260802078187082345529207694986
     G2_x, G2_y= 996781205833008774514500082376783249102396023663454813447423147977397232763, 1668503676786377725805489344771023921079126552019160156920634619255970485781
     G3_x, G3_y= 2251563274489750535117886426533222435294046428347329203627021249169616184184,1798716007562728905295480679789526322175868328062420237419143593021674992973
@@ -80,12 +74,10 @@ def main():
 
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler('picozk_test', field=[p,n]):
-        alpha = 5
-        # t = 2
-        # poseidon_hash = PoseidonHash(p, alpha = alpha, input_rate = t)
-        # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
-        # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
-        ncmec_digest = None
+        poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
+        ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
+        ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        # ncmec_digest = None
 
         Points = [CurvePoint(False, G1_x, G1_y, p),
                 CurvePoint(False, G2_x, G2_y, p),
@@ -94,6 +86,7 @@ def main():
                 CurvePoint(False, G5_x, G5_y, p)]
 
         # Make Cuckoo Table
+        alpha = 5
         epsilon=1
         cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
