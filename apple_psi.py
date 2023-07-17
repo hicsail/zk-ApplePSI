@@ -6,7 +6,7 @@ import sys
 sys.path.insert(1, './utils')
 from curvepoint import CurvePoint
 from pedersen_hash import pedersen_hash
-from test_data import make_Cuckoo
+from pdata import make_Cuckoo
 
 def remove_duplicates(secret:list): 
     _secret = []
@@ -15,7 +15,7 @@ def remove_duplicates(secret:list):
 
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
 
-    # TODO: Unncomment - Simulating Apple confirming their data is same as NCMEC image data
+    # Simulating Apple confirming their data is same as NCMEC image data
     poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
     apple_digest = poseidon_hash.hash(apple_secrets)
     assert0(ncmec_digest - val_of(apple_digest))
@@ -49,9 +49,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
         assert(gelm==cuckoo_table.get_item_at(idx))
 
-    # TODO: Assert that len(non_emplist_items) == d+1 (length of poly is d+1)
-    # assert(len(non_emplist)-len(poly)==0)
-    
 
 def main():
     # Apple input: Curve & generator parameters
@@ -76,8 +73,7 @@ def main():
         poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
-        # ncmec_digest = None
-
+        
         Points = [CurvePoint(False, G1_x, G1_y, p),
                 CurvePoint(False, G2_x, G2_y, p),
                 CurvePoint(False, G3_x, G3_y, p),
