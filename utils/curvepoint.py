@@ -27,12 +27,13 @@ class CurvePoint:
     # Point addition
     def add(self, other):
         assert isinstance(other, CurvePoint)
-        assert val_of(self.is_infinity) == False
         assert val_of(self.x) != val_of(other.x) or val_of(self.y) != val_of(other.y)
         l = ((other.y - self.y) * modular_inverse(other.x - self.x, self.p)) % self.p
         x3 = l*l - self.x - other.x
         y3 = l * (self.x - x3) - self.y
-        return self.mux(other.is_infinity, CurvePoint(False, x3 % self.p, y3 % self.p, self.p))
+        return self.mux(other.is_infinity,
+                        other.mux(self.is_infinity,
+                                  CurvePoint(False, x3 % self.p, y3 % self.p, self.p)))
 
     # Point scaling by a scalar via repeated doubling
     def scale(self, s):
