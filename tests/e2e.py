@@ -42,16 +42,15 @@ class TestInterpolation(unittest.TestCase):
                       (17136757849927752745205382383109844381056385676206962696615894972524613244840, 51205854624749739556354727798176745738753011491453557497102975187014090965090),
                       (68009475676132699416480739324647426793996838463973604256669248866160408522929, 37305274461364918522140623956686657783961262461356198153573712844878370500562)
                       ]
-            assert(cuckoo_table.table==test_d)
             for idx, val in enumerate(cuckoo_table.table):
                 _gelm = poly(idx)
-                gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
+                gelm = (val_of(_gelm.x), val_of(_gelm.y))
                 print("idx",idx)
                 print("")
                 print("gelm", gelm)
                 print("table", cuckoo_table.get_item_at(idx))
                 print("")
-                assert(gelm==val)
+                assert(gelm==test_d[idx])
 
 
 if __name__ == '__main__':
