@@ -1,6 +1,6 @@
 from cuckoo_table import CuckooTable
 from pedersen_hash import pedersen_hash
-from interpolation import lagrange_poly
+from interpolation import lagrange_poly, calc_polynomial
 from picozk import *
 
 def make_Cuckoo(secrets, p, Points, alpha, epsilon):
@@ -28,9 +28,9 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
     # Calculate bots by the polynomial above
     emptyList = cuckoo_table.get_empty_indices()
-    poly = lagrange_poly(xs, ys, p)
+    poly_coeffs = lagrange_poly(xs, ys, p)
     for bot_idx in emptyList:
-        bot = poly(bot_idx)
+        bot = calc_polynomial(bot_idx, poly_coeffs)
         cuckoo_table.set_table_at(bot_idx, bot)
 
     # Open values and save as normal group elements
@@ -39,4 +39,4 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         gelm = (val_of(_gelm.x),val_of(_gelm.y))
         cuckoo_table.set_table_at(idx, gelm)
 
-    return cuckoo_table, poly
+    return cuckoo_table, poly_coeffs

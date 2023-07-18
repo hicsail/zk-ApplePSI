@@ -7,13 +7,14 @@ sys.path.insert(1, './utils')
 from curvepoint import CurvePoint
 from pedersen_hash import pedersen_hash
 from pdata import make_Cuckoo
+from interpolation import calc_polynomial
 
 def remove_duplicates(secret:list): 
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
 
-def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
+def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly_coeffs):
 
     # Simulating Apple confirming their data is same as NCMEC image data
     # poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
@@ -46,7 +47,7 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
     print(cuckoo_table.table)
     for idx, val in enumerate(cuckoo_table.table):
-        _gelm = poly(idx)
+        _gelm = calc_polynomial(idx, poly_coeffs)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
         print("gelm", gelm)
         print("val", val)
@@ -87,12 +88,12 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon=1
-        cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+        cuckoo_table, poly_coeffs = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
-        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
+        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly_coeffs)
 
 if __name__ == "__main__":
     main()
