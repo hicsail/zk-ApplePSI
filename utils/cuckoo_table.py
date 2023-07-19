@@ -7,14 +7,12 @@ class CuckooTable:
         self.p = p
         self.table_size = table_size
         self.table = [None] * self.table_size
-        self.empty_indices = list(range(self.table_size))
         self.non_emplist = []
         self.bulk_set(secrets)
     
     def bulk_set(self, secrets):
         for item in secrets:
             self.set_item(item)
-        self.update_indices()
 
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
@@ -39,20 +37,11 @@ class CuckooTable:
             else:
                 item, self.table[index_h2] = self.table[index_h2], SecretInt(item, self.p)
 
-    def update_indices(self):
-        for index in range(len(self.table)):
-            if self.table[index] is not None:
-                self.non_emplist.append((index, self.table[index]))
-                self.empty_indices.remove(index)
-
     def get_item_at(self, index):
         return self.table[index]
 
     def set_table_at(self, index, item):
         self.table[index]=item
-
-    def get_empty_indices(self):
-        return self.empty_indices
 
     def get_non_emplist(self):
         return self.non_emplist
