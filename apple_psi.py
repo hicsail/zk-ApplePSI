@@ -83,7 +83,7 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon=1
-        # TODO: Change the eviction algo
+        
         # TODO: Do not use SecretInt in Ped hash and CurvePoint
         cuckoo_table, non_emplist, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
