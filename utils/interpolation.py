@@ -19,6 +19,6 @@ def lagrange_poly(xs, ys, p):
             else:
                 result = result.add(term)
 
-        return result
+        return result, n-1
 
     return polynomial

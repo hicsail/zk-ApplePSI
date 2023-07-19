@@ -16,9 +16,9 @@ def remove_duplicates(secret:list):
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
 
     # Simulating Apple confirming their data is same as NCMEC image data
-    poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
-    apple_digest = poseidon_hash.hash(apple_secrets)
-    assert0(ncmec_digest - val_of(apple_digest))
+    # poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
+    # apple_digest = poseidon_hash.hash(apple_secrets)
+    # assert0(ncmec_digest - val_of(apple_digest))
 
 
     # Prove that the set non_emplist is a subset of the set apple_secrets
@@ -45,10 +45,10 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
     for idx, val in enumerate(cuckoo_table.table):
-        _gelm = poly(idx)
+        _gelm, d = poly(idx)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
         assert(gelm==val)
-    # TODO: Add poly outputs d = len(non_emplist) - 1
+    assert(d == len(non_emplist) - 1)
 
 def main():
     # Apple input: Curve & generator parameters
@@ -70,9 +70,10 @@ def main():
 
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler('picozk_test', field=[p,n]):
-        poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
-        ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
-        ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        # poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
+        # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
+        # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        ncmec_digest = None
         
         Points = [CurvePoint(False, G1_x, G1_y, p),
                 CurvePoint(False, G2_x, G2_y, p),

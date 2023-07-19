@@ -30,7 +30,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     emptyList = cuckoo_table.get_empty_indices()
     poly = lagrange_poly(xs, ys, p)
     for bot_idx in emptyList:
-        bot = poly(bot_idx)
+        bot, _ = poly(bot_idx)
         cuckoo_table.set_table_at(bot_idx, bot)
 
     # Open values and save as normal group elements
