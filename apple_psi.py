@@ -27,7 +27,7 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
     for idx, val in non_emplist:
         curr_state = 1
         for i in range(len(apple_secrets)):
-            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, curr_state, final_state))
+            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, final_state, curr_state))
         assert0(curr_state)
 
         
@@ -48,7 +48,7 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
         _gelm = poly(idx)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
         assert(gelm==val)
-
+    # TODO: Add poly outputs d = len(non_emplist) - 1
 
 def main():
     # Apple input: Curve & generator parameters
@@ -83,6 +83,9 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon=1
+        # TODO: Split list out of the table class
+        # TODO: Change the eviction algo
+        # TODO: Do not use SecretInt in Ped hash and CurvePoint
         cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
         # Make Secrets
