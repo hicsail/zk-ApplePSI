@@ -45,7 +45,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly_
         assert(gelm==cuckoo_table.get_item_at(idx))
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
-    print(cuckoo_table.table)
     for idx, val in enumerate(cuckoo_table.table):
         _gelm = calc_polynomial(idx, poly_coeffs)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
