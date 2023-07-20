@@ -73,12 +73,7 @@ def main():
         # ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         # ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
         ncmec_digest = None
-        
-        Points = [CurvePoint(False, G1_x, G1_y, p),
-                CurvePoint(False, G2_x, G2_y, p),
-                CurvePoint(False, G3_x, G3_y, p),
-                CurvePoint(False, G4_x, G4_y, p),
-                CurvePoint(False, G5_x, G5_y, p)]
+        Points = [(G1_x, G1_y),(G2_x, G2_y),(G3_x, G3_y),(G4_x, G4_y),(G5_x, G5_y)]
 
         # Make Cuckoo Table
         alpha = 5
@@ -87,9 +82,16 @@ def main():
         # TODO: Do not use SecretInt in Ped hash and CurvePoint
         cuckoo_table, non_emplist, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
+        Points = [CurvePoint(False, G1_x, G1_y, p),
+                CurvePoint(False, G2_x, G2_y, p),
+                CurvePoint(False, G3_x, G3_y, p),
+                CurvePoint(False, G4_x, G4_y, p),
+                CurvePoint(False, G5_x, G5_y, p)]
+                
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
+        non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
         apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly)
 
 if __name__ == "__main__":

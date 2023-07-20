@@ -30,12 +30,12 @@ class CuckooTable:
 
         index = self.hash_two(item) if second==True else self.hash_one(item)
         if self.table[index] == None:
-            self.table[index] = SecretInt(item, self.p)
+            self.table[index] = item
             self.orig_item = None
             return
         else:
             _item = self.table[index].copy()
-            self.table[index] = SecretInt(item, self.p)
+            self.table[index] = item
             self.set_item(_item, second=True)
 
     def get_item_at(self, index):
