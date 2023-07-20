@@ -1,5 +1,5 @@
 from cuckoo_table import CuckooTable
-from pedersen_hash_field import pedersen_hash_field
+from pedersen_hash_int import pedersen_hash_int
 from interpolation import lagrange_poly
 from curvepoint import CurvePoint
 from picozk import *
@@ -23,7 +23,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     for idx, secret in non_emplist:
-        _gelm = pedersen_hash_field(secret, Points, p)
+        _gelm = pedersen_hash_int(secret, Points, p)
         _gelm = CurvePoint(False, _gelm[0], _gelm[0], p)
         _gelm = _gelm.scale(alpha)
         cuckoo_table.set_table_at(idx, _gelm)

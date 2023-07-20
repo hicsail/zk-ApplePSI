@@ -40,6 +40,8 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
         _gelm = pedersen_hash(val, Points, p)
         _gelm = _gelm.scale(alpha)
         gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
+        # print("gelm", gelm)
+        # print("celm", cuckoo_table.get_item_at(idx))
         assert(gelm==cuckoo_table.get_item_at(idx))
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
@@ -91,6 +93,7 @@ def main():
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
+        print("non_emplist", non_emplist)
         non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
         apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly)
 
