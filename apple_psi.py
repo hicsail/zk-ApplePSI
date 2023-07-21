@@ -37,18 +37,18 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
 
         # Prove that hash_to_curve(val)^alpha is performed appropriately
         val = val.to_binary()
-        _gelm = pedersen_hash(val, Points, p)
-        _gelm = _gelm.scale(alpha)
-        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        # print("gelm", gelm)
-        # print("celm", cuckoo_table.get_item_at(idx))
-        assert(gelm==cuckoo_table.get_item_at(idx))
+        gelm = pedersen_hash(val, Points, p)
+        gelm = gelm.scale(alpha)
+        table_elm = cuckoo_table.get_item_at(idx)
+        assert0(gelm.x - table_elm.x)
+        assert0(gelm.y - table_elm.y)
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
     for idx, val in enumerate(cuckoo_table.table):
-        _gelm, d = poly(idx)
-        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        assert(gelm==val)
+        gelm, d = poly(idx)
+        assert(gelm.x == val.x)
+        assert(gelm.y == val.y)
+        
     assert(d == len(non_emplist) - 1)
 
 def main():
