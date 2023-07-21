@@ -93,7 +93,6 @@ def main():
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
-        print("non_emplist", non_emplist)
         non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
         apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly)
 

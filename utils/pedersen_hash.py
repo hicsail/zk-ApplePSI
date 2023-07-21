@@ -1,14 +1,13 @@
 import copy
 from picozk import *
 def pedersen_hash(M, Points, p):
-
-    num_bits = len(M.wires)
     
+    num_bits = len(M.wires)
+    print("Sec num_bits", num_bits)
     # Split M into two halves, a and b
-    a = M >> (num_bits // 2)
-    print("a Secint", val_of(a.to_arithmetic(field=p)))
+    k = (num_bits // 2)
+    a = M >> k
     b = M & ((1 << (num_bits // 2)) - 1)
-    print("b Secint", val_of(b.to_arithmetic(field=p)))
 
     # Splitting input into high and low bits
     a_low = a & ((1 << 248) - 1)
@@ -20,19 +19,17 @@ def pedersen_hash(M, Points, p):
     a_high = a_high.to_arithmetic(field=p)
     b_low = b_low.to_arithmetic(field=p)
     b_high = b_high.to_arithmetic(field=p)
-    print("b_low secint", val_of(b_low), "b_high", val_of(b_high))
 
     # Calculate the sum
     result = copy.deepcopy(Points[0])
+    result.x = (result.x + (a_low.val * Points[1].x) % p) % p
+    result.x = (result.x + (a_high.val * Points[2].x) % p) % p
+    result.x = (result.x + (b_low.val * Points[3].x) % p) % p
+    result.x = (result.x + (b_high.val * Points[4].x) % p) % p
 
-    result.x = result.x + a_low.val * Points[1].x
-    result.x = result.x + a_high.val * Points[2].x
-    result.x = result.x + b_low.val * Points[3].x
-    result.x = result.x + b_high.val * Points[4].x
-
-    result.y = result.y + a_low.val * Points[1].y
-    result.y = result.y + a_high.val * Points[2].y
-    result.y = result.y + b_low.val * Points[3].y
-    result.y = result.y + b_high.val * Points[4].y
+    result.y = (result.y + (a_low.val * Points[1].y) % p) % p
+    result.y = (result.y + (a_high.val * Points[2].y) % p) % p
+    result.y = (result.y + (b_low.val * Points[3].y) % p) % p
+    result.y = (result.y + (b_high.val * Points[4].y) % p) % p
 
     return result
