@@ -7,14 +7,13 @@ class CuckooTable:
         self.p = p
         self.table_size = table_size
         self.table = [None] * self.table_size
-        self.empty_indices = list(range(self.table_size))
         self.non_emplist = []
         self.bulk_set(secrets)
     
     def bulk_set(self, secrets):
         for item in secrets:
+            self.orig_item = None
             self.set_item(item)
-        self.update_indices()
 
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
@@ -22,37 +21,28 @@ class CuckooTable:
     def hash_two(self, item):
         return ((86837 * item + 40637) % self.p) % self.table_size
 
-    def set_item(self, item):
-        for _ in range(self.table_size):  # Limit the number of relocations to avoid infinite loops
-            # Calculate the hash values
-            index_h1 = self.hash_one(item)
-            index_h2 = self.hash_two(item)
+    def set_item(self, item, second=False):
 
-            # If either location is available, place the item there
-            # If neither location is available, evict and relocate the item in the second
-            if self.table[index_h1] == None:
-                self.table[index_h1] = SecretInt(item, self.p)
-                return
-            elif self.table[index_h2] == None:
-                self.table[index_h2] = SecretInt(item, self.p)
-                return
-            else:
-                item, self.table[index_h2] = self.table[index_h2], SecretInt(item, self.p)
+        if self.orig_item == None:
+            self.orig_item = item
+        elif self.orig_item == item:
+            return
 
-    def update_indices(self):
-        for index in range(len(self.table)):
-            if self.table[index] is not None:
-                self.non_emplist.append((index, self.table[index]))
-                self.empty_indices.remove(index)
+        index = self.hash_two(item) if second==True else self.hash_one(item)
+        if self.table[index] == None:
+            self.table[index] = SecretInt(item, self.p)
+            self.orig_item = None
+            return
+        else:
+            _item = self.table[index].copy()
+            self.table[index] = SecretInt(item, self.p)
+            self.set_item(_item, second=True)
 
     def get_item_at(self, index):
         return self.table[index]
 
     def set_table_at(self, index, item):
         self.table[index]=item
-
-    def get_empty_indices(self):
-        return self.empty_indices
 
     def get_non_emplist(self):
         return self.non_emplist

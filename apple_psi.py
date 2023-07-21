@@ -13,7 +13,7 @@ def remove_duplicates(secret:list):
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
 
-def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly):
+def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly):
 
     # Simulating Apple confirming their data is same as NCMEC image data
     poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
@@ -22,12 +22,11 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
 
 
     # Prove that the set non_emplist is a subset of the set apple_secrets
-    non_emplist = cuckoo_table.get_non_emplist()
     final_state = 0
     for idx, val in non_emplist:
         curr_state = 1
         for i in range(len(apple_secrets)):
-            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, curr_state, final_state))
+            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, final_state, curr_state))
         assert0(curr_state)
 
         
@@ -38,17 +37,19 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
 
         # Prove that hash_to_curve(val)^alpha is performed appropriately
         val = val.to_binary()
-        _gelm = pedersen_hash(val, Points, p)
-        _gelm = _gelm.scale(alpha)
-        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        assert(gelm==cuckoo_table.get_item_at(idx))
+        gelm = pedersen_hash(val, Points, p)
+        gelm = gelm.scale(alpha)
+        table_elm = cuckoo_table.get_item_at(idx)
+        assert0(gelm.x - table_elm.x)
+        assert0(gelm.y - table_elm.y)
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
     for idx, val in enumerate(cuckoo_table.table):
-        _gelm = poly(idx)
-        gelm = (val_of(_gelm.x), val_of(_gelm.y)) # Open group elements to reduce runtime in the zk backend
-        assert(gelm==val)
-
+        gelm, d = poly(idx)
+        assert(gelm.x == val.x)
+        assert(gelm.y == val.y)
+        
+    assert(d == len(non_emplist) - 1)
 
 def main():
     # Apple input: Curve & generator parameters
@@ -83,12 +84,14 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon=1
-        cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+        
+        # TODO: Do not use SecretInt in Ped hash and CurvePoint
+        cuckoo_table, non_emplist, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
-        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, poly)
+        apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly)
 
 if __name__ == "__main__":
     main()
