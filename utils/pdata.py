@@ -42,10 +42,4 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         bot, _ = poly(bot_idx)
         cuckoo_table.set_table_at(bot_idx, bot)
 
-    # Open values and save as normal group elements
-    for idx in range(len(cuckoo_table.table)):
-        _gelm = cuckoo_table.get_item_at(idx)
-        gelm = (val_of(_gelm.x),val_of(_gelm.y))
-        cuckoo_table.set_table_at(idx, gelm)
-
     return cuckoo_table, non_emplist, poly
