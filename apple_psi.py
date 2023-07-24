@@ -79,8 +79,6 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon=1
-        
-        # TODO: Do not use SecretInt in Ped hash and CurvePoint
         cuckoo_table, non_emplist, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
         
         Points = [CurvePoint(False, G1_x, G1_y, p),
