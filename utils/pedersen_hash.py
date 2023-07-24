@@ -2,8 +2,8 @@ import copy
 from picozk import *
 def pedersen_hash(M, Points, p):
     
-    num_bits = len(M.wires)
-    print("Sec num_bits", num_bits)
+    num_bits = p.bit_length()
+
     # Split M into two halves, a and b
     k = (num_bits // 2)
     a = M >> k
