@@ -78,6 +78,23 @@ cd picozk
 pip install .
 ```
 
+Note) Due to the transition of picozk, you need setup.py in the picozk dir:
+```
+from setuptools import setup
+
+setup(name='picozk',
+      version='0.2',
+      description='PicoZK library & compiler for writing zero-knowledge statements',
+      url='none',
+      author='Joe Near',
+      author_email='jnear@uvm.edu',
+      license='GPLv3',
+      install_requires=[],
+      packages=['picozk', 'picozk/poseidon_hash'],
+      zip_safe=False)
+
+```
+
 ## 🏋️‍♀️ Run your python script and firealarm test module inside the container
 
 You can run your python script in docker shell and compile by picozk in the following command. 

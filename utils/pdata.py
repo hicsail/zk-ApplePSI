@@ -20,7 +20,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     table_size = len(secrets)*(1+epsilon)
     cuckoo_table = CuckooTable(secrets, table_size, p)
     non_emplist, emptyList = make_index_lists(cuckoo_table)
-        
+
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     for idx, secret in non_emplist:
         _gelm = pedersen_hash_int(secret, Points, p)

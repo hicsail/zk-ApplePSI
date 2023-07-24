@@ -86,7 +86,7 @@ def main():
                 CurvePoint(False, G3_x, G3_y, p),
                 CurvePoint(False, G4_x, G4_y, p),
                 CurvePoint(False, G5_x, G5_y, p)]
-                
+
         # Make Secrets
         alpha=SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
