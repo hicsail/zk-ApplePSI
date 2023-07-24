@@ -46,11 +46,12 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
     
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices(): 
     for idx, val in enumerate(cuckoo_table.table):
-        _gelm = calc_polynomial(idx, poly_coeffs)
+        gelm = calc_polynomial(idx, poly_coeffs)
         print("gelm", gelm)
         print("val", val)
-        assert(_gelm.x==val.x)
-        assert(_gelm.y==val.y)
+        print("")
+        assert(gelm.x==val.x)
+        assert(gelm.y==val.y)
 
     assert(len(poly_coeffs) == len(non_emplist))
 

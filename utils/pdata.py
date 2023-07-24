@@ -34,9 +34,8 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
     # Calculate bots by the polynomial above
     poly_coeffs = lagrange_poly(xs, ys, p)
-    print("poly_coeffs", poly_coeffs)
     for bot_idx in emptyList:
         bot = calc_polynomial(bot_idx, poly_coeffs)
         cuckoo_table.set_table_at(bot_idx, bot)
 
-    return cuckoo_table, poly_coeffs
+    return cuckoo_table, non_emplist, poly_coeffs
