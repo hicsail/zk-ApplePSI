@@ -18,7 +18,7 @@ def lagrange_coefficients(ai, bi, roots, p):
         print("(-1)**(n-1-k)", (-1)**(n-1-k))
         print("modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai])), p)", modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai])), p))
         # a = ((-1)**(n-1-k) * sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai]) % p), p)) % p
-        print("(sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai]), p)) % p)", (sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai])), p)) % p)
+        print("(sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai]), p)) % p)", (sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai]) % p), p)) % p)
         a = ((-1)**(n-1-k) * (sigma * modular_inverse(int(np.prod([ai - ak for ak in roots if ak != ai]) % p), p)) % p) % p
         print("a", a)
         c_k = bi.scale(int(a))
@@ -27,6 +27,8 @@ def lagrange_coefficients(ai, bi, roots, p):
         print("")
 
     c_k_values.reverse()
+    print("c_k_values", c_k_values)
+    print("")
 
     return c_k_values
 
