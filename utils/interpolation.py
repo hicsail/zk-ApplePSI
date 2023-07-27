@@ -17,9 +17,9 @@ def lagrange_coefficients(ai, bi, roots, p):
         num  = (-1)**(n-1-k) * sigma % p
         denom = modular_inverse(np.prod([ai - ak for ak in roots if ak != ai]) % p, p) % p
         term = num * denom % p
-        c_k = bi.scale(int(term))
+        if bi.is_infinity==False:
+            c_k = bi.scale(int(term))
         c_k_values.append(c_k)
-
     c_k_values.reverse()
 
     return c_k_values
@@ -41,7 +41,11 @@ def lagrange_poly(xs, ys, p):
             if s == None:
                 s = c[i]
             else:
-                s = s.add(c[i])
+                if s.x != c[i].x or s.y != c[i].y:
+                    s = s.add(c[i])
+                else:
+                    s = s.scale(2)
+                    
         coeffs.append(s)
     return coeffs
     
@@ -50,8 +54,12 @@ def calc_polynomial(x, coeffs):
     res = None
 
     for i, coeff in enumerate(reversed(coeffs)):
+        scaled = coeff.scale(x**i)
         if res == None:
-            res = coeff.scale(x**i)
+            res = scaled
         else:
-            res = res.add(coeff.scale(x**i))
+            if scaled.x != res.x or scaled.y != res.y:
+                res = res.add(scaled)
+            else:
+                res = res.scale(2)
     return res

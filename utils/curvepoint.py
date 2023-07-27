@@ -27,7 +27,7 @@ class CurvePoint:
     # Point addition
     def add(self, other):
         assert isinstance(other, CurvePoint)
-        # assert val_of(self.x) != val_of(other.x) or val_of(self.y) != val_of(other.y)
+        assert val_of(self.x) != val_of(other.x) or val_of(self.y) != val_of(other.y)
         l = ((other.y - self.y) * modular_inverse(other.x - self.x, self.p)) % self.p
         x3 = l*l - self.x - other.x
         y3 = l * (self.x - x3) - self.y
@@ -51,7 +51,10 @@ class CurvePoint:
             temp = self
             for b in reversed(bits):
                 if b:
-                    res = temp.add(res)
+                    if val_of(self.x) != val_of(res.x) or val_of(self.y) != val_of(res.y):
+                        res = temp.add(res)
+                    else:
+                        res = temp.scale(2)
                 temp = temp.double()
             return res
         else:
