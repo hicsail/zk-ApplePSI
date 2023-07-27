@@ -12,12 +12,16 @@ def lagrange_poly(xs, ys, p):
             for j in range(n):
                 if j != i:
                     a = ((X - xs[j]) * modular_inverse(xs[i] - xs[j], p)) % p
+                    print("a", a, "term", term)
                     term = term.scale(a)
 
             if result is None:
                 result = term
             else:
-                result = result.add(term)
+                if result.x != term.x or result.y != term.y:
+                    result = result.add(term)
+                else:
+                    result = result.scale(2)
 
         return result, n-1
 

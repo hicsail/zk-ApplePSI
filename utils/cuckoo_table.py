@@ -34,7 +34,7 @@ class CuckooTable:
             self.orig_item = None
             return
         else:
-            _item = self.table[index].copy()
+            _item = self.table[index]
             self.table[index] = item
             self.set_item(_item, second=True)
 
