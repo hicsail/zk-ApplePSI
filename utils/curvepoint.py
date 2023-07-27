@@ -37,6 +37,8 @@ class CurvePoint:
 
     # Point scaling by a scalar via repeated doubling
     def scale(self, s):
+        if self.is_infinity==True:
+            return self
         if isinstance(s, ArithmeticWire):
             bits = s.to_binary()
             res = CurvePoint(True, 0, 0, self.p)
