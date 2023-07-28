@@ -50,13 +50,6 @@ _ins1="irs/picozk_test.type1.ins"
 _wit2="irs/picozk_test.type2.wit"
 _ins2="irs/picozk_test.type2.ins"
 
-wit0="irs/wit/picozk_test.type0.wit"
-ins0="irs/ins/picozk_test.type0.ins"
-wit1="irs/wit/picozk_test.type1.wit"
-ins1="irs/ins/picozk_test.type1.ins"
-wit2="irs/wit/picozk_test.type2.wit"
-ins2="irs/ins/picozk_test.type2.ins"
-
 rel="irs/picozk_test.rel"
 wit0="irs/wit/picozk_test.type0.wit"
 ins0="irs/ins/picozk_test.type0.ins"
@@ -80,12 +73,12 @@ echo "Running $file ....";
 
 if python3 $dir$file.py
     then
-        cp $_wit0 $wit0
-        cp $_ins0 $ins0
-        cp $_wit1 $wit1
-        cp $_ins1 $ins1
-        cp $_wit2 $wit2
-        cp $_ins2 $ins2
+        mv $_wit0 $wit0
+        mv $_ins0 $ins0
+        mv $_wit1 $wit1
+        mv $_ins1 $ins1
+        mv $_wit2 $wit2
+        mv $_ins2 $ins2
         if wtk-firealarm $rel $wit0 $ins0 $wit1 $ins1 $wit2 $ins2
             then
                 echo "wtk-firealarm successfully completed"

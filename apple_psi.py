@@ -70,7 +70,7 @@ def main():
     G5_x, G5_y= 2379962749567351885752724891227938183011949129833673362440656643086021394946,776496453633298175483985398648758586525933812536653089401905292063708816422
 
     # Simulating Apple confirming their data is same as NCMEC image data
-    with PicoZKCompiler('picozk_test', field=[p,n]):
+    with PicoZKCompiler('irs/picozk_test', field=[p,n]):
         poseidon_hash = PoseidonHash(p, alpha = 17, input_rate = 3)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
