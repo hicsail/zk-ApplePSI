@@ -46,13 +46,13 @@ cp $orig$file.py $dir$file.py
 
 name=$target/$file$underscore$prime_fam$underscore$size
 
-rel="picozk_test.rel"
-wit0="picozk_test.type0.wit"
-ins0="picozk_test.type0.ins"
-wit1="picozk_test.type1.wit"
-ins1="picozk_test.type1.ins"
-wit2="picozk_test.type2.wit"
-ins2="picozk_test.type2.ins"
+rel="irs/picozk_test.rel"
+wit0="irs/picozk_test.type0.wit"
+ins0="irs/picozk_test.type0.ins"
+wit1="irs/picozk_test.type1.wit"
+ins1="irs/picozk_test.type1.ins"
+wit2="irs/picozk_test.type2.wit"
+ins2="irs/picozk_test.type2.ins"
 
 
 [ -e $rel  ] && rm $rel
