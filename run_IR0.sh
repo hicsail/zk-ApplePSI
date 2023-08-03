@@ -48,8 +48,8 @@ cp $orig$file.py $dir$file.py
 rm -r irs
 mkdir -p irs
 
-# Actual Execution
 
+# Actual Execution
 echo "Running $file ....";
 
 if python3 $dir$file.py
@@ -80,8 +80,8 @@ if python3 $dir$file.py
                                 # if it has, move it to irs/ins
                                 mv irs/$ir "irs/wit/"
                         fi
-
-                    done
+                done
+            # copy the irs into local
             cp -r ./irs /code
         else
             echo "Error during wtk-firealarm"
