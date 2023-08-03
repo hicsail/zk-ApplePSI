@@ -43,48 +43,50 @@ dir="/usr/src/app/"
 orig="/code/"
 cp $orig$file.py $dir$file.py
 
-_wit0="irs/picozk_test.type0.wit"
-_ins0="irs/picozk_test.type0.ins"
-_wit1="irs/picozk_test.type1.wit"
-_ins1="irs/picozk_test.type1.ins"
-_wit2="irs/picozk_test.type2.wit"
-_ins2="irs/picozk_test.type2.ins"
 
-rel="irs/picozk_test.rel"
-wit0="irs/wit/picozk_test.type0.wit"
-ins0="irs/ins/picozk_test.type0.ins"
-wit1="irs/wit/picozk_test.type1.wit"
-ins1="irs/ins/picozk_test.type1.ins"
-wit2="irs/wit/picozk_test.type2.wit"
-ins2="irs/ins/picozk_test.type2.ins"
+# Refresh the directory
+rm -r irs
+mkdir -p irs
 
-
-[ -e $rel  ] && rm $rel
-[ -e $wit0  ] && rm $wit0
-[ -e $ins0 ] && rm $ins0
-[ -e $wit1  ] && rm $wit1
-[ -e $ins1 ] && rm $ins1
-[ -e $wit2  ] && rm $wit2
-[ -e $ins2 ] && rm $ins2
 
 # Actual Execution
-
 echo "Running $file ....";
 
 if python3 $dir$file.py
     then
-        mv $_wit0 $wit0
-        mv $_ins0 $ins0
-        mv $_wit1 $wit1
-        mv $_ins1 $ins1
-        mv $_wit2 $wit2
-        mv $_ins2 $ins2
-        if wtk-firealarm $rel $wit0 $ins0 $wit1 $ins1 $wit2 $ins2
+        dirlist=`ls irs`
+        echo $dirlist
+        
+        # Creat dir
+        mkdir -p irs/wit
+        mkdir -p irs/ins
+        
+        # Run firealarm test
+        if wtk-firealarm $dirlist
             then
                 echo "wtk-firealarm successfully completed"
-            else
-                echo "Error during wtk-firealarm"
+            
+                # Copy into directory compatible with mac-and-cheese
+                
+                for ir in ${dirlist}
+                    do
+                        if [[ "irs/"$ir == *.ins ]]
+                            then
+                                # if it has, move it to irs/ins
+                                mv irs/$ir "irs/ins/"
+                        fi
+                        if [[ "irs/"$ir == *.wit ]]
+                            then
+                                # if it has, move it to irs/ins
+                                mv irs/$ir "irs/wit/"
+                        fi
+                done
+            # copy the irs into local
+            cp -r ./irs /code
+        else
+            echo "Error during wtk-firealarm"
         fi
-    else
-        echo "Error in the python script - abort"
+
+else
+    echo "Error in the python script - abort"
 fi
