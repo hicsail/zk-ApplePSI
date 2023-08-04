@@ -52,41 +52,32 @@ mkdir -p irs
 # Actual Execution
 echo "Running $file ....";
 
-if python3 $dir$file.py
-    then
-        dirlist=`ls irs`
-        echo $dirlist
-        
-        # Creat dir
-        mkdir -p irs/wit
-        mkdir -p irs/ins
-        
-        # Run firealarm test
-        if wtk-firealarm $dirlist
-            then
-                echo "wtk-firealarm successfully completed"
-            
-                # Copy into directory compatible with mac-and-cheese
-                
-                for ir in ${dirlist}
-                    do
-                        if [[ "irs/"$ir == *.ins ]]
-                            then
-                                # if it has, move it to irs/ins
-                                mv irs/$ir "irs/ins/"
-                        fi
-                        if [[ "irs/"$ir == *.wit ]]
-                            then
-                                # if it has, move it to irs/ins
-                                mv irs/$ir "irs/wit/"
-                        fi
-                done
-            # copy the irs into local
-            cp -r ./irs /code
-        else
-            echo "Error during wtk-firealarm"
-        fi
+python3 $dir$file.py
+dirlist=`ls irs`
+echo $dirlist
 
-else
-    echo "Error in the python script - abort"
-fi
+# Creat dir
+mkdir -p irs/wit
+mkdir -p irs/ins
+
+# Run firealarm test
+cd irs && wtk-firealarm $dirlist && cd ..
+
+echo "wtk-firealarm successfully completed"
+
+# Copy into directory compatible with mac-and-cheese
+for ir in ${dirlist}
+    do
+        if [[ "irs/$ir" == *.ins ]]
+            then
+                # if it has, move it to irs/ins
+                mv ./irs/$ir ./irs/ins/$ir
+        fi
+        if [[ "irs/$ir" == *.wit ]]
+            then
+                # if it has, move it to irs/ins
+                mv ./irs/$ir ./irs/wit/$ir
+        fi
+done
+# copy the irs into local
+cp -r ./irs /code
