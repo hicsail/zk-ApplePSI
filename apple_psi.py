@@ -1,5 +1,6 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
+from picozk.functions import picozk_function
 from ecdsa import SECP256k1
 
 import sys
@@ -13,6 +14,15 @@ def remove_duplicates(secret:list):
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
 
+@picozk_function
+def subset_test(apple_secrets, curr_val):
+    final_state = 0
+    curr_state = 1
+    for i in range(len(apple_secrets)):
+        curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==curr_val, final_state, curr_state))
+    assert0(curr_state)
+    return curr_state
+
 def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly):
 
     # Simulating Apple confirming their data is same as NCMEC image data
@@ -21,14 +31,9 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
     assert0(ncmec_digest - val_of(apple_digest))
 
 
-    # Prove that the set non_emplist is a subset of the set apple_secrets
-    final_state = 0
     for idx, val in non_emplist:
-        curr_state = 1
-        for i in range(len(apple_secrets)):
-            curr_state = mux(curr_state==final_state, curr_state, mux(apple_secrets[i]==val, final_state, curr_state))
-        assert0(curr_state)
-
+        # Prove that the set non_emplist is a subset of the set apple_secrets
+        subset_test(apple_secrets, val)
         
         # Prove that each real element exists in hash one or two
         h1 = cuckoo_table.hash_one(val)
