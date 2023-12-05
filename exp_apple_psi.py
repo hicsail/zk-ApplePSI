@@ -2,13 +2,23 @@ from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from picozk.functions import picozk_function
 from ecdsa import SECP256k1
-
+import random
 import sys
+import time
 
 sys.path.insert(1, "./utils")
 from curvepoint import CurvePoint
 from pedersen_hash import pedersen_hash
 from pdata import make_Cuckoo
+
+
+def make_secret(scale, p):
+    res = []
+    for i in range(scale):
+        ent = random.randint(0, p)
+        res += [ent]
+
+    return res
 
 
 def remove_duplicates(secret: list):
@@ -66,23 +76,16 @@ def apple_pis(
 
 
 def main():
-    # Apple input: Curve & generator parameters
-    apple_secrets = [
-        114303190253219474269384419659897947128561637493978467700760475363248655921884,
-        47452005787557361733223600541610643778646485287733815210507547468435601040849,
-        47452005787557361733223600541610643778646485287733815210507547468435601040848,
-    ]
-    apple_secrets = remove_duplicates(apple_secrets)
-
-    ncmec_secrets = [
-        114303190253219474269384419659897947128561637493978467700760475363248655921884,
-        47452005787557361733223600541610643778646485287733815210507547468435601040849,
-        47452005787557361733223600541610643778646485287733815210507547468435601040848,
-    ]
-    ncmec_secrets = remove_duplicates(ncmec_secrets)
+    ttl_start_time = time.time()
+    scale = 100
 
     p = SECP256k1.curve.p()  # p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
+
+    # Apple input: Curve & generator parameters
+    apple_secrets = make_secret(scale, p)
+    apple_secrets = remove_duplicates(apple_secrets)
+    ncmec_secrets = apple_secrets
 
     # TODO: Update the consts - Points on the elliptic curve
     G1_x, G1_y = (
@@ -108,11 +111,15 @@ def main():
 
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler("irs/picozk_test", field=[p, n]):
+        start_time = time.time()
         poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
-        Points = [(G1_x, G1_y), (G2_x, G2_y), (G3_x, G3_y), (G4_x, G4_y), (G5_x, G5_y)]
+        end_time = time.time()
+        elapsed_time_poseidon = end_time - start_time
 
+        Points = [(G1_x, G1_y), (G2_x, G2_y), (G3_x, G3_y), (G4_x, G4_y), (G5_x, G5_y)]
+        
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
@@ -141,6 +148,13 @@ def main():
             cuckoo_table,
             non_emplist,
             poly,
+        )
+
+        ttl_end_time = time.time()
+        ttl_elapsed = ttl_end_time - ttl_start_time
+        other_time = ttl_elapsed - elapsed_time_poseidon
+        print(
+            f"\n Poseidon Hash: {elapsed_time_poseidon}, Other: {other_time}, TTL: {ttl_elapsed} seconds to run"
         )
 
 

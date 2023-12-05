@@ -5,6 +5,7 @@ from pedersen_hash_int import pedersen_hash_int
 from interpolation import lagrange_poly
 from curvepoint import CurvePoint
 
+
 def make_index_lists(cuckoo_table):
     non_emplist = []
     emptyList = list(range(cuckoo_table.table_size))
@@ -14,22 +15,28 @@ def make_index_lists(cuckoo_table):
             emptyList.remove(index)
     return non_emplist, emptyList
 
+
 def calc_table_size(secrets, epsilon):
-    
-    table_size = len(secrets)*(1+epsilon)
+    table_size = len(secrets) * (1 + epsilon)
 
     if math.log2(table_size).is_integer():
-        print("table_size", table_size ,"is a power of 2")
+        print("table_size", table_size, "is a power of 2")
     else:
-        print("table_size", table_size ,"is not a power of 2, padding it to next power of 2.")
-        next_power_of_two = 2**math.ceil(math.log2(table_size))
-        padded_secrets = [None] * int(next_power_of_two)  # Padding with None or your preferred placeholder
+        print(
+            "table_size",
+            table_size,
+            "is not a power of 2, padding it to next power of 2.",
+        )
+        next_power_of_two = 2 ** math.ceil(math.log2(table_size))
+        padded_secrets = [None] * int(
+            next_power_of_two
+        )  # Padding with None or your preferred placeholder
         table_size = len(padded_secrets)
         print("Final table size:", table_size)
     return table_size
 
-def make_Cuckoo(secrets, p, Points, alpha, epsilon):
 
+def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     # Make a Cuckoo table
     table_size = calc_table_size(secrets, epsilon)
     cuckoo_table = CuckooTable(secrets, table_size, p)

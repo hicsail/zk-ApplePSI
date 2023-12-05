@@ -1,8 +1,7 @@
 def pedersen_hash_int(M, Points, p):
-
     num_bits = p.bit_length()
     # Split M into two halves, a and b
-    k = (num_bits // 2)
+    k = num_bits // 2
     a = M >> k
     b = M & ((1 << (num_bits // 2)) - 1)
 
@@ -15,7 +14,7 @@ def pedersen_hash_int(M, Points, p):
     # Calculate the sum
     result_x = Points[0][0] % p
     result_y = Points[0][1] % p
-    
+
     result_x = (result_x + (a_low * Points[1][0]) % p) % p
     result_x = (result_x + (a_high * Points[2][0]) % p) % p
     result_x = (result_x + (b_low * Points[3][0]) % p) % p
