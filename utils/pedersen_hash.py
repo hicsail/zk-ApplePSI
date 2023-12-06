@@ -1,11 +1,12 @@
 import copy
 from picozk import *
+
+
 def pedersen_hash(M, Points, p):
-    
     num_bits = p.bit_length()
 
     # Split M into two halves, a and b
-    k = (num_bits // 2)
+    k = num_bits // 2
     a = M >> k
     b = M & ((1 << (num_bits // 2)) - 1)
 
