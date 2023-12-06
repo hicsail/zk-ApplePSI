@@ -39,8 +39,8 @@ class CuckooTable:
                 evicted_item = None
                 break
 
-            elif (
-                second is True and (item == self.orig_item or loop_history == self.table_size * 2)
+            elif second is True and (
+                item == self.orig_item or loop_history == self.table_size * 2
             ):
                 # Stop if we've looped back to the original item or exceed p * 2
                 break

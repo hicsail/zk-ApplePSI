@@ -1,10 +1,9 @@
 import math
-import numpy as np
 from cuckoo_table import CuckooTable
 from pedersen_hash_int import pedersen_hash_int
 from interpolation import lagrange_poly
 from curvepoint import CurvePoint
-
+import time
 
 def make_index_lists(cuckoo_table):
     non_emplist = []
@@ -45,6 +44,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     # Map each element in the Cuckoo Table onto an elliptic curve and exponentiate each element
     xs = []
     ys = []
+    print(f"Pedersen Hash...", end="\r", flush=True)
     for idx, secret in non_emplist:
         gelm = pedersen_hash_int(secret, Points, p)
         gelm = CurvePoint(False, gelm[0], gelm[1], p)
@@ -54,9 +54,14 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         ys.append(gelm)
 
     # Calculate bots by the polynomial above
-    poly = lagrange_poly(xs, ys, p)
+    print(f"Lagrange Polynomial...", end="\r", flush=True)
+    start_time = time.time()
+    poly = lagrange_poly(xs, ys, cuckoo_table, p)
     for bot_idx in emptyList:
         bot, _ = poly(bot_idx)
         cuckoo_table.set_table_at(bot_idx, bot)
-
+    end_time = time.time()
+    print(f"Lagrange Polynomial Done...", end="\r", flush=True)
+    lagrange_time = end_time - start_time
+    print(f'\n Lagrange Took {lagrange_time} sec')
     return cuckoo_table, non_emplist, poly
