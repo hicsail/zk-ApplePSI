@@ -8,14 +8,24 @@ def lagrange_poly(xs, ys, cuckoo_table, p):
     # Preprocessing Lgrange Polynomial (Only terms)
     lagrange_bases = {}  # idx in cuckoo table (key): terms (value)
 
+    denominators=[]
+    for i in range(n):
+        denominator = 1
+        for j in range(n):
+            if j != i:
+                denominator *= modular_inverse(xs[i] - xs[j], p)
+        denominators.append(denominator)
+
+
     def calc_terms(obj_idx):
         terms = []
         for i in range(n):
             term = ys[i]
+            numerator = 1
             for j in range(n):
                 if j != i:
-                    a = ((obj_idx - xs[j]) * modular_inverse(xs[i] - xs[j], p)) % p
-                    term = term.scale(a)
+                    numerator *= ((obj_idx - xs[j]))
+            term = term.scale(numerator * denominators[i] % p)
             terms.append(term)
         return terms
 

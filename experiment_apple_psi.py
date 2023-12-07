@@ -73,14 +73,11 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
 
     print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
-    beg_lag = time.time()
     for idx, val in enumerate(cuckoo_table.table):
         gelm, d = poly(idx)
         assert gelm.x == val.x
         assert gelm.y == val.y
 
-    end_lag = time.time()
-    print(f"\n Took {end_lag - beg_lag} to complete validating identity of polynomial")
     assert d == len(non_emplist) - 1
 
 
@@ -175,18 +172,16 @@ def run(size, csv_file):
             ttl_end_time = time.time()
             ttl_elapsed = ttl_end_time - ttl_start_time
 
-            other_time = ttl_elapsed - elapsed_time_poseidon
-
             file_path = "irs/picozk_test"
             line_count = count(file_path)
 
-            print(f"\n Poseidon Hash: {elapsed_time_poseidon}, Other: {other_time}, TTL: {ttl_elapsed} seconds to run (ck_time: {ck_time} seconds) - Produced {line_count} Mil lines in .rel")
+            print(f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel")
 
-            new_data = [size, other_time, elapsed_time_poseidon, ttl_elapsed, ck_time, line_count]
+            new_data = [size, ttl_elapsed, ck_time, elapsed_time_poseidon, line_count, 'v3']
             res_list.append(new_data)
             new_row = pd.DataFrame(
                 [new_data],
-                columns=["Scale", "Time-Other", "Time-Poseidon", "Time-Total", "ck_time", "line_count"],
+                columns=["Scale", "Time-Total", "Time-Cuckoo", "Time-Poseidon",  "Lines", "Version"],
             )
 
 
@@ -206,26 +201,41 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5, 10, 20]
+    sizes = [500]
 
     for size in sizes:
         print('\n* Running:', size)
         gc.collect()
         run(size, csv_file)
 
-    res_df = pd.read_csv(csv_file)
-    # Plotting runtime for apple psi specific experiments
-    plt.bar(res_df["Scale"], res_df["Time-Poseidon"], label="Time-Poseidon")
-    plt.bar(
-        res_df["Scale"],
-        res_df["Time-Other"],
-        bottom=res_df["Time-Poseidon"],
-        label="Time-Other",
-    )
+    
+    def plot_twin(df, title):
+        # Plotting runtime for apple psi specific experiments
+        plt.plot(df["Scale"], df["Time-Total"], label="Time")
+        plt.title(title)
+        plt.xlabel("Scale")
+        plt.ylabel("Time in sec")
 
-    plt.title("Runtime")
-    plt.xlabel("Scale")
-    plt.ylabel("Time in sec")
-    plt.grid(True)
-    plt.legend(loc="best")
-    plt.show()
+        # Create a second y-axis for "Lines"
+        ax2 = plt.twinx()
+        ax2.plot(df["Scale"], df["Lines"], color='orange', label="Lines")
+        ax2.set_ylabel("Number of Lines")
+
+        # Add legends for both plots
+        plt.legend(loc="upper left")
+        ax2.legend(loc="upper right")
+
+        # Other plot settings
+        plt.grid(True)
+        plt.show()
+
+    
+    df = pd.read_csv(csv_file)
+    
+    v2_df = df[df["Version"] == "v2"]
+    v2_title = "Runtime and Line (v2)"
+    plot_twin(v2_df, v2_title)
+
+    v3_df = df[df["Version"] == "v3"]
+    v3_title = "Runtime and Line (v3)"
+    plot_twin(v3_df, v3_title)
