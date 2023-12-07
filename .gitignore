@@ -6,3 +6,4 @@ __pycache__
 venv/
 picozk
 utils/group_operation.py
+Apple_analysis.csv

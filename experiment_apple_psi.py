@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import gc
-
+from experiment.counter import count
 import sys
 
 sys.path.insert(1, "./utils")
@@ -73,16 +73,21 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
 
     print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
+    beg_lag = time.time()
     for idx, val in enumerate(cuckoo_table.table):
         gelm, d = poly(idx)
         assert gelm.x == val.x
         assert gelm.y == val.y
 
+    end_lag = time.time()
+    print(f"\n Took {end_lag - beg_lag} to complete validating identity of polynomial")
     assert d == len(non_emplist) - 1
 
 
 def run(size, csv_file):
+
     ttl_start_time = time.time()
+
     scale = int(size)
     p = 115792089237316195423570985008687907853269984665640564039457584007908834671663
     n = SECP256k1.order
@@ -172,13 +177,16 @@ def run(size, csv_file):
 
             other_time = ttl_elapsed - elapsed_time_poseidon
 
-            print(f"\n Poseidon Hash: {elapsed_time_poseidon}, Other: {other_time}, TTL: {ttl_elapsed} seconds to run (ck_time: {ck_time} seconds)")
+            file_path = "irs/picozk_test"
+            line_count = count(file_path)
 
-            new_data = [size, other_time, elapsed_time_poseidon, ttl_elapsed, ck_time]
+            print(f"\n Poseidon Hash: {elapsed_time_poseidon}, Other: {other_time}, TTL: {ttl_elapsed} seconds to run (ck_time: {ck_time} seconds) - Produced {line_count} Mil lines in .rel")
+
+            new_data = [size, other_time, elapsed_time_poseidon, ttl_elapsed, ck_time, line_count]
             res_list.append(new_data)
             new_row = pd.DataFrame(
                 [new_data],
-                columns=["Scale", "Other-Time", "Time-Poseidon", "Time-Total", "ck_time"],
+                columns=["Scale", "Time-Other", "Time-Poseidon", "Time-Total", "ck_time", "line_count"],
             )
 
 
@@ -198,11 +206,7 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [50, 100, 200, 400, 600, 800]
-
-    if os.path.isfile(csv_file):
-        os.remove(csv_file)  # Delete the file
-        print(f"File '{csv_file}' has been deleted.")
+    sizes = [5, 10, 20]
 
     for size in sizes:
         print('\n* Running:', size)
