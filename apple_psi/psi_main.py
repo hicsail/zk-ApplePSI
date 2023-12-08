@@ -4,6 +4,7 @@ from picozk.functions import picozk_function
 from apple_psi.pedersen_hash import pedersen_hash
 from apple_psi.interpolation import calc_polynomial
 
+
 @picozk_function
 def subset_test(apple_secrets, curr_val):
     final_state = 0

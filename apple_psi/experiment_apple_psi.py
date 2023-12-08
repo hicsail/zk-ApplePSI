@@ -4,19 +4,17 @@ from picozk.functions import picozk_function
 from ecdsa import SECP256k1
 import random
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import gc
 
 import sys
 
-sys.path.insert(1, "./apple_psi")
+sys.path.insert(1, ".")
 from apple_psi.curvepoint import CurvePoint
-from apple_psi.pedersen_hash import pedersen_hash
 from apple_psi.pdata import make_Cuckoo
-from apple_psi.interpolation import calc_polynomial
 from apple_psi.psi_main import apple_psi
+
 
 def count(file_path):
     file_path += ".rel"
@@ -208,33 +206,3 @@ if __name__ == "__main__":
         print("\n* Running:", size)
         gc.collect()
         main(size, csv_file)
-
-    def plot_twin(df, title):
-        # Plotting runtime for apple psi specific experiments
-        plt.plot(df["Scale"], df["Time-Total"], label="Time")
-        plt.title(title)
-        plt.xlabel("Scale")
-        plt.ylabel("Time in sec")
-
-        # Create a second y-axis for "Lines"
-        ax2 = plt.twinx()
-        ax2.plot(df["Scale"], df["Lines"], color="orange", label="Lines")
-        ax2.set_ylabel("Number of Lines")
-
-        # Add legends for both plots
-        plt.legend(loc="upper left")
-        ax2.legend(loc="upper right")
-
-        # Other plot settings
-        plt.grid(True)
-        plt.show()
-
-    df = pd.read_csv(csv_file)
-
-    v2_df = df[df["Version"] == "v2"]
-    v2_title = "Runtime and Line (v2)"
-    plot_twin(v2_df, v2_title)
-
-    v3_df = df[df["Version"] == "v3"]
-    v3_title = "Runtime and Line (v3)"
-    plot_twin(v3_df, v3_title)

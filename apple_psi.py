@@ -2,10 +2,12 @@ import sys
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from ecdsa import SECP256k1
+
 sys.path.insert(1, "./apple_psi")
 from apple_psi.curvepoint import CurvePoint
 from apple_psi.pdata import make_Cuckoo
 from apple_psi.psi_main import apple_psi
+
 
 def remove_duplicates(secret: list):
     _secret = []
