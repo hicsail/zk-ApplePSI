@@ -46,7 +46,9 @@ def subset_test(apple_secrets, curr_val):
     return curr_state
 
 
-def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly):
+def apple_pis(
+    p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly
+):
     # Simulating Apple confirming their data is same as NCMEC image data
     print(f"Reconciling NCMEC Data with Apple Data", end="\r", flush=True)
     poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
@@ -82,7 +84,6 @@ def apple_pis(p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_e
 
 
 def run(size, csv_file):
-
     ttl_start_time = time.time()
 
     scale = int(size)
@@ -141,7 +142,9 @@ def run(size, csv_file):
             epsilon = 1
             print(f"Making Cuckoo", end="\r", flush=True)
             ck_start_time = time.time()
-            cuckoo_table, non_emplist, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+            cuckoo_table, non_emplist, poly = make_Cuckoo(
+                apple_secrets, p, Points, alpha, epsilon
+            )
             ck_end_time = time.time()
             ck_time = ck_end_time - ck_start_time
 
@@ -175,15 +178,30 @@ def run(size, csv_file):
             file_path = "irs/picozk_test"
             line_count = count(file_path)
 
-            print(f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel")
+            print(
+                f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel"
+            )
 
-            new_data = [size, ttl_elapsed, ck_time, elapsed_time_poseidon, line_count, 'v3']
+            new_data = [
+                size,
+                ttl_elapsed,
+                ck_time,
+                elapsed_time_poseidon,
+                line_count,
+                "v3",
+            ]
             res_list.append(new_data)
             new_row = pd.DataFrame(
                 [new_data],
-                columns=["Scale", "Time-Total", "Time-Cuckoo", "Time-Poseidon",  "Lines", "Version"],
+                columns=[
+                    "Scale",
+                    "Time-Total",
+                    "Time-Cuckoo",
+                    "Time-Poseidon",
+                    "Lines",
+                    "Version",
+                ],
             )
-
 
             # Check if the CSV file exists
             if not os.path.isfile(csv_file):
@@ -201,14 +219,13 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [500]
+    sizes = [50]
 
     for size in sizes:
-        print('\n* Running:', size)
+        print("\n* Running:", size)
         gc.collect()
         run(size, csv_file)
 
-    
     def plot_twin(df, title):
         # Plotting runtime for apple psi specific experiments
         plt.plot(df["Scale"], df["Time-Total"], label="Time")
@@ -218,7 +235,7 @@ if __name__ == "__main__":
 
         # Create a second y-axis for "Lines"
         ax2 = plt.twinx()
-        ax2.plot(df["Scale"], df["Lines"], color='orange', label="Lines")
+        ax2.plot(df["Scale"], df["Lines"], color="orange", label="Lines")
         ax2.set_ylabel("Number of Lines")
 
         # Add legends for both plots
@@ -229,9 +246,8 @@ if __name__ == "__main__":
         plt.grid(True)
         plt.show()
 
-    
     df = pd.read_csv(csv_file)
-    
+
     v2_df = df[df["Version"] == "v2"]
     v2_title = "Runtime and Line (v2)"
     plot_twin(v2_df, v2_title)
