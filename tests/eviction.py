@@ -39,8 +39,8 @@ class CuckooTable:
                 print(f"Set item: {item} at: {index} table: {self.table}")
                 break
 
-            elif (
-                second is True and (item == self.orig_item or loop_history == self.table_size * 2)
+            elif second is True and (
+                item == self.orig_item or loop_history == self.table_size * 2
             ):
                 if item == self.orig_item:
                     print("Back to original")
@@ -48,7 +48,7 @@ class CuckooTable:
                     print("Exceeded table size * 2")
                 # Stop if we've looped back to the original item or exceed p * 2
                 break
-            
+
             else:
                 # Swap the item at the index with the new item and try again
                 item, self.table[index] = self.table[index], item

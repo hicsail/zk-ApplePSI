@@ -6,9 +6,10 @@ from ecdsa import SECP256k1
 import sys
 
 sys.path.insert(1, "./utils")
-from curvepoint import CurvePoint
-from pedersen_hash import pedersen_hash
-from pdata import make_Cuckoo
+from utils.curvepoint import CurvePoint
+from utils.pedersen_hash import pedersen_hash
+from utils.pdata import make_Cuckoo
+from utils.interpolation import calc_polynomial
 
 
 def remove_duplicates(secret: list):
@@ -32,7 +33,14 @@ def subset_test(apple_secrets, curr_val):
 
 
 def apple_pis(
-    p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly
+    p,
+    alpha,
+    apple_secrets,
+    ncmec_digest,
+    Points,
+    cuckoo_table,
+    non_emplist,
+    lagrange_bases,
 ):
     # Simulating Apple confirming their data is same as NCMEC image data
     poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
@@ -58,7 +66,7 @@ def apple_pis(
 
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
     for idx, val in enumerate(cuckoo_table.table):
-        gelm, d = poly(idx)
+        gelm, d = calc_polynomial(idx, lagrange_bases)
         assert gelm.x == val.x
         assert gelm.y == val.y
 
@@ -116,7 +124,7 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
-        cuckoo_table, non_emplist, poly = make_Cuckoo(
+        cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
             apple_secrets, p, Points, alpha, epsilon
         )
 
@@ -140,7 +148,7 @@ def main():
             Points,
             cuckoo_table,
             non_emplist,
-            poly,
+            lagrange_bases,
         )
 
 
