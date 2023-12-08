@@ -8,13 +8,33 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import gc
-from experiment.counter import count
+
 import sys
 
 sys.path.insert(1, "./utils")
 from utils.curvepoint import CurvePoint
 from utils.pedersen_hash import pedersen_hash
 from utils.pdata import make_Cuckoo
+from utils.interpolation import calc_polynomial
+
+
+def count(file_path):
+    file_path += ".rel"
+    # Initialize a variable to count lines
+    line_count = 0
+
+    # Open the file and read line by line
+    with open(file_path, "r") as file:
+        for line in file:
+            line_count += 1
+
+    million = 1000000
+    line_count /= million
+
+    # Print the total number of lines
+    print(f"\n Total number of lines in the file: {line_count} (* 10^6)")
+
+    return line_count
 
 
 def make_secret(scale, p):
@@ -47,7 +67,14 @@ def subset_test(apple_secrets, curr_val):
 
 
 def apple_pis(
-    p, alpha, apple_secrets, ncmec_digest, Points, cuckoo_table, non_emplist, poly
+    p,
+    alpha,
+    apple_secrets,
+    ncmec_digest,
+    Points,
+    cuckoo_table,
+    non_emplist,
+    lagrange_bases,
 ):
     # Simulating Apple confirming their data is same as NCMEC image data
     print(f"Reconciling NCMEC Data with Apple Data", end="\r", flush=True)
@@ -76,7 +103,7 @@ def apple_pis(
     print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
     for idx, val in enumerate(cuckoo_table.table):
-        gelm, d = poly(idx)
+        gelm, d = calc_polynomial(idx, lagrange_bases)
         assert gelm.x == val.x
         assert gelm.y == val.y
 
@@ -142,7 +169,7 @@ def run(size, csv_file):
             epsilon = 1
             print(f"Making Cuckoo", end="\r", flush=True)
             ck_start_time = time.time()
-            cuckoo_table, non_emplist, poly = make_Cuckoo(
+            cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
                 apple_secrets, p, Points, alpha, epsilon
             )
             ck_end_time = time.time()
@@ -169,7 +196,7 @@ def run(size, csv_file):
                 Points,
                 cuckoo_table,
                 non_emplist,
-                poly,
+                lagrange_bases,
             )
 
             ttl_end_time = time.time()
