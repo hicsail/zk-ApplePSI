@@ -28,6 +28,7 @@ def apple_psi(
     cuckoo_table,
     non_emplist,
     lagrange_bases,
+    poly_degree,
 ):
     # Simulating Apple confirming their data is same as NCMEC image data
     print(f"Reconciling NCMEC Data with Apple Data", end="\r", flush=True)
@@ -56,8 +57,8 @@ def apple_psi(
     print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
     # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
     for idx, val in enumerate(cuckoo_table.table):
-        gelm, d = calc_polynomial(idx, lagrange_bases)
+        gelm = calc_polynomial(idx, lagrange_bases)
         assert gelm.x == val.x
         assert gelm.y == val.y
 
-    assert d == len(non_emplist) - 1
+    assert poly_degree == len(non_emplist) - 1

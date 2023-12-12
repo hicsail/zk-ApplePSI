@@ -66,7 +66,7 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
-        cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
+        cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
             apple_secrets, p, Points, alpha, epsilon
         )
 
@@ -91,6 +91,7 @@ def main():
             cuckoo_table,
             non_emplist,
             lagrange_bases,
+            poly_degree,
         )
 
 

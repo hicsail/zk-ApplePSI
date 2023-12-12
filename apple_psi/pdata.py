@@ -57,12 +57,12 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     # Calculate bots by the polynomial above
     print(f"Lagrange Polynomial...", end="\r", flush=True)
     start_time = time.time()
-    lagrange_bases = calc_lagrange_terms(xs, ys, cuckoo_table, p)
+    lagrange_bases, poly_degree = calc_lagrange_terms(xs, ys, cuckoo_table, p)
     for bot_idx in emptyList:
-        bot, _ = calc_polynomial(bot_idx, lagrange_bases)
+        bot = calc_polynomial(bot_idx, lagrange_bases)
         cuckoo_table.set_table_at(bot_idx, bot)
     end_time = time.time()
     print(f"Lagrange Polynomial Done...", end="\r", flush=True)
     lagrange_time = end_time - start_time
     print(f"\n Lagrange Took {lagrange_time} sec")
-    return cuckoo_table, non_emplist, lagrange_bases
+    return cuckoo_table, non_emplist, lagrange_bases, poly_degree
