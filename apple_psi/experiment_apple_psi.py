@@ -99,7 +99,7 @@ def main(size, csv_file):
     )
 
     # Simulating Apple confirming their data is same as NCMEC image data
-    with PicoZKCompiler("irs/picozk_test", field=[p, n]):
+    with PicoZKCompiler("irs/picozk_test_"+str(size), field=[p, n]):
         try:
             print(f"Building Parameters", end="\r", flush=True)
             start_time = time.time()
@@ -123,7 +123,7 @@ def main(size, csv_file):
             epsilon = 1
             print(f"Making Cuckoo", end="\r", flush=True)
             ck_start_time = time.time()
-            cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
+            cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
                 apple_secrets, p, Points, alpha, epsilon
             )
             ck_end_time = time.time()
@@ -151,12 +151,13 @@ def main(size, csv_file):
                 cuckoo_table,
                 non_emplist,
                 lagrange_bases,
+                poly_degree
             )
 
             ttl_end_time = time.time()
             ttl_elapsed = ttl_end_time - ttl_start_time
 
-            file_path = "irs/picozk_test"
+            file_path = "irs/picozk_test_"+str(size)
             line_count = count(file_path)
 
             print(
@@ -169,7 +170,7 @@ def main(size, csv_file):
                 ck_time,
                 elapsed_time_poseidon,
                 line_count,
-                "v3",
+                "v4(Bary)",
             ]
             res_list.append(new_data)
             new_row = pd.DataFrame(
@@ -200,7 +201,7 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5]
+    sizes = [5, 100]
 
     for size in sizes:
         print("\n* Running:", size)
