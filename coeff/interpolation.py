@@ -2,6 +2,7 @@ import numpy as np
 import itertools
 from curvepoint import CurvePoint
 
+
 #Borrowing from picozk
 def _extended_gcd(a, b):
    """
@@ -30,24 +31,27 @@ def modular_inverse(x, p):
 def sym_polynomial(k, xs, p):
     return sum(np.prod(subset) % p for subset in itertools.combinations(xs, k))
 
+'''
+Findings:
+- g.scale((a-b)/d) != g.scale(a).add(g.(modinv(b))).scale(modinv(d))
+- g.scale((a-b)/d) != g.scale(a-b).scale(modinv(d))
+- num and denom are always int == float
+'''
 
 def lagrange_coefficients(xi, yi, xs, p):
     n = len(xs)
     c_k_values = []
-    denom = modular_inverse(np.prod([xi - x for x in xs if x != xi]) % p, p) % p
-    inv_denom = modular_inverse(denom, p) % p
-    assert np.prod([xi - x for x in xs if x != xi]) % p == inv_denom
+    # denom = modular_inverse(np.prod([xi - x for x in xs if x != xi]) % p, p) % p
+    _denom = np.prod([xi - x for x in xs if x != xi]) % p
     
     for k in range(n):
         sigma = sym_polynomial(n - 1 - k, [x for x in xs if x != xi], p) % p
         num = (-1) ** (n - 1 - k) * sigma % p
-        #Note: num and denom are always int == float
-        assert num == int(num)
-        assert inv_denom == int(inv_denom)
+        mul = num/_denom
+        # assert mul == int(mul) #Find a way to scale by fraction
         if yi.is_infinity == False:
-            scaled_num = yi.scale(int(num))
-            scaled_denom_inv = scaled_num.scale(int(inv_denom))
-            c_k_values.append(scaled_denom_inv)
+            scaled = yi.scale(int(mul))
+            c_k_values.append(scaled)
         else:
             c_k_values.append(yi)
 
@@ -65,7 +69,7 @@ def lagrange_poly(xs, ys, p):
             if coef.x != c[i].x or coef.y != c[i].y:
                 coef = coef.add(c[i])
             else:
-                assert 1 == 0
+                # assert 1 == 0
                 coef = coef.scale(2)
         lagrange_coeffs.append(coef)
 
@@ -81,7 +85,7 @@ def calc_polynomial(x, lagrange_coeffs, p):
         if scaled.x != res.x or scaled.y != res.y:
             res = res.add(scaled)
         else:
-            assert 1 == 0
+            # assert 1 == 0
             res = res.scale(2)
 
     return res
