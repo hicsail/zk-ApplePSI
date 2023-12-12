@@ -14,7 +14,8 @@ def calc_lagrange_terms(xs, ys, cuckoo_table, p):
         denominator = 1
         for j in range(n):
             if j != i:
-                denominator *= modular_inverse(xs[i] - xs[j], p)
+                denominator *= (xs[i] - xs[j]) % p
+        denominator = modular_inverse(denominator, p)
         denominators.append(denominator)
 
     # Calculate terms for all index in the cuckoo table

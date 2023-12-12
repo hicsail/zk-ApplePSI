@@ -1,8 +1,8 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from picozk.functions import picozk_function
-from apple_psi.pedersen_hash import pedersen_hash
-from apple_psi.interpolation import calc_polynomial
+from Barycentric.pedersen_hash import pedersen_hash
+from Barycentric.interpolation import calc_polynomial
 
 
 @picozk_function

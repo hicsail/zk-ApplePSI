@@ -11,9 +11,9 @@ import gc
 import sys
 
 sys.path.insert(1, ".")
-from apple_psi.curvepoint import CurvePoint
-from apple_psi.pdata import make_Cuckoo
-from apple_psi.psi_main import apple_psi
+from Barycentric.curvepoint import CurvePoint
+from Barycentric.pdata import make_Cuckoo
+from Barycentric.psi_main import apple_psi
 
 
 def count(file_path):
@@ -169,7 +169,7 @@ def main(size, csv_file):
                 ck_time,
                 elapsed_time_poseidon,
                 line_count,
-                "v3",
+                "v4 (Barycentric)",
             ]
             res_list.append(new_data)
             new_row = pd.DataFrame(
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5]
+    sizes = [20]
 
     for size in sizes:
         print("\n* Running:", size)
