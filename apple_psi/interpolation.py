@@ -1,4 +1,19 @@
 from picozk import *
+import numpy as np
+
+
+def calc_bary_weights(xs, ys, p):
+    xs = np.array(xs)
+    ys = np.array(ys)
+    n = len(xs)
+
+    # Vectorized computation of differences
+    diffs = xs.reshape((n, 1)) - xs
+    np.fill_diagonal(diffs, 1)  # Avoid division by zero
+
+    # Non-vectorized computation of weights due to modular inverse
+    bary_weights = np.array([modular_inverse(np.prod(diffs[j, :]) % p, p) for j in range(n)])
+    return bary_weights
 
 
 # https://en.wikipedia.org/wiki/Lagrange_polynomial#Barycentric_form
@@ -6,14 +21,8 @@ def calc_lagrange_terms(xs, ys, cuckoo_table, p):
     # Preprocessing Lgrange Polynomial (Only terms)
     lagrange_bases = {}  # idx in cuckoo table (key): terms (value)
 
-    bary_weights = []
-    for j in range(len(xs)):
-        weight = 1
-        for m in range(len(xs)):
-            if j != m:
-                weight *= (xs[j] - xs[m]) % p
-        weight = modular_inverse(weight, p)
-        bary_weights.append(weight)
+    bary_weights = calc_bary_weights(xs, ys, p)
+    
 
     denominators = []
 

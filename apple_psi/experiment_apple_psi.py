@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5]
+    sizes = [5, 50]
 
     for size in sizes:
         print("\n* Running:", size)
