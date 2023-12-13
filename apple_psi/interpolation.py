@@ -18,43 +18,46 @@ def calc_bary_weights(xs, ys, p):
 
 # https://en.wikipedia.org/wiki/Lagrange_polynomial#Barycentric_form
 def calc_lagrange_terms(xs, ys, cuckoo_table, p):
-    # Preprocessing Lgrange Polynomial (Only terms)
-    lagrange_bases = {}  # idx in cuckoo table (key): terms (value)
-
     bary_weights = calc_bary_weights(xs, ys, p)
     
+    xs = np.array(xs)
+    ys = np.array(ys, dtype=object)  # Assuming ys are custom objects that support vectorized operations
+    n = len(xs)
 
-    denominators = []
-
+    # Precompute modular inverses for all unique differences
+    unique_diffs = set()
     for x, _ in enumerate(cuckoo_table.table):
-        denom = 0
-        for m, weight in enumerate(bary_weights):
-            if x != xs[m]:
-                inverse_diff = modular_inverse(x - xs[m], p)
-                denom += (weight * inverse_diff) % p
-            else:
-                denom = 1
-                break
+        for xi in xs:
+            diff = (x - xi) % p
+            if diff != 0:  # We only need inverses for non-zero differences
+                unique_diffs.add(diff)
 
-        denominators.append(denom % p)
+    precomputed_inverses = {diff: modular_inverse(diff, p) for diff in unique_diffs}
 
+    # Compute denominators
+    denominators = np.zeros(len(cuckoo_table.table), dtype=object)
     for x, _ in enumerate(cuckoo_table.table):
-        terms = []
-        for j, (weight, y) in enumerate(zip(bary_weights, ys)):
-            # If it's an interpolation node, the value of the polynomial at this node is y
-            if x == xs[j]:
-                terms = [y]
-                break
-            else:
-                inverse_diff = modular_inverse((x - xs[j]) % p, p)
-                num = (weight * inverse_diff) % p
-                scaler = num * modular_inverse(denominators[x], p) % p
-                scaled_y = y.scale(scaler)
-                terms.append(scaled_y)
+        if x in xs:
+            denominators[x] = 1
+        else:
+            inverse_diffs = np.array([precomputed_inverses[(x - xm) % p] for xm in xs], dtype=object)
+            denominators[x] = np.sum(bary_weights * inverse_diffs) % p
 
-        lagrange_bases[x] = terms
+    # Compute terms
+    lagrange_bases = {}
+    for x, _ in enumerate(cuckoo_table.table):
+        if x in xs:
+            index = np.where(xs == x)[0][0]
+            lagrange_bases[x] = [ys[index]]
+        else:
+            inverse_diffs = np.array([precomputed_inverses[(x - xj) % p] for xj in xs], dtype=object)
+            nums = (bary_weights * inverse_diffs) % p
+            scalers = (nums * modular_inverse(denominators[x], p)) % p
+            terms = [y.scale(scaler) for y, scaler in zip(ys, scalers)]
+            lagrange_bases[x] = terms
 
-    return lagrange_bases, len(xs) - 1
+    return lagrange_bases, n - 1
+
 
 
 def calc_polynomial(idx, lagrange_bases):
