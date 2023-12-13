@@ -99,109 +99,105 @@ def main(size, csv_file):
     )
 
     # Simulating Apple confirming their data is same as NCMEC image data
-    with PicoZKCompiler("irs/picozk_test_"+str(size), field=[p, n]):
-        try:
-            print(f"Building Parameters", end="\r", flush=True)
-            start_time = time.time()
-            poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
-            ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
-            print(f"Hashing Images", end="\r", flush=True)
-            ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
-            end_time = time.time()
-            elapsed_time_poseidon = end_time - start_time
+    with PicoZKCompiler("irs/picozk_test_" + str(size), field=[p, n]):
+        print(f"Building Parameters", end="\r", flush=True)
+        start_time = time.time()
+        poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
+        ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
+        print(f"Hashing Images", end="\r", flush=True)
+        ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
+        end_time = time.time()
+        elapsed_time_poseidon = end_time - start_time
 
-            Points = [
-                (G1_x, G1_y),
-                (G2_x, G2_y),
-                (G3_x, G3_y),
-                (G4_x, G4_y),
-                (G5_x, G5_y),
-            ]
+        Points = [
+            (G1_x, G1_y),
+            (G2_x, G2_y),
+            (G3_x, G3_y),
+            (G4_x, G4_y),
+            (G5_x, G5_y),
+        ]
 
-            # Make Cuckoo Table
-            alpha = 5
-            epsilon = 1
-            print(f"Making Cuckoo", end="\r", flush=True)
-            ck_start_time = time.time()
-            cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
-                apple_secrets, p, Points, alpha, epsilon
-            )
-            ck_end_time = time.time()
-            ck_time = ck_end_time - ck_start_time
+        # Make Cuckoo Table
+        alpha = 5
+        epsilon = 1
+        print(f"Making Cuckoo", end="\r", flush=True)
+        ck_start_time = time.time()
+        cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
+            apple_secrets, p, Points, alpha, epsilon
+        )
+        ck_end_time = time.time()
+        ck_time = ck_end_time - ck_start_time
 
-            Points = [
-                CurvePoint(False, G1_x, G1_y, p),
-                CurvePoint(False, G2_x, G2_y, p),
-                CurvePoint(False, G3_x, G3_y, p),
-                CurvePoint(False, G4_x, G4_y, p),
-                CurvePoint(False, G5_x, G5_y, p),
-            ]
+        Points = [
+            CurvePoint(False, G1_x, G1_y, p),
+            CurvePoint(False, G2_x, G2_y, p),
+            CurvePoint(False, G3_x, G3_y, p),
+            CurvePoint(False, G4_x, G4_y, p),
+            CurvePoint(False, G5_x, G5_y, p),
+        ]
 
-            # Make Secrets
-            print(f"Producing Pdata", end="\r", flush=True)
-            alpha = SecretInt(alpha)
-            apple_secrets = [SecretInt(c) for c in apple_secrets]
-            non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
-            apple_psi(
-                p,
-                alpha,
-                apple_secrets,
-                ncmec_digest,
-                Points,
-                cuckoo_table,
-                non_emplist,
-                lagrange_bases,
-                poly_degree
-            )
+        # Make Secrets
+        print(f"Producing Pdata", end="\r", flush=True)
+        alpha = SecretInt(alpha)
+        apple_secrets = [SecretInt(c) for c in apple_secrets]
+        non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
+        apple_psi(
+            p,
+            alpha,
+            apple_secrets,
+            ncmec_digest,
+            Points,
+            cuckoo_table,
+            non_emplist,
+            lagrange_bases,
+            poly_degree,
+        )
 
-            ttl_end_time = time.time()
-            ttl_elapsed = ttl_end_time - ttl_start_time
+        ttl_end_time = time.time()
+        ttl_elapsed = ttl_end_time - ttl_start_time
 
-            file_path = "irs/picozk_test_"+str(size)
-            line_count = count(file_path)
+        file_path = "irs/picozk_test_" + str(size)
+        line_count = count(file_path)
 
-            print(
-                f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel"
-            )
+        print(
+            f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel"
+        )
 
-            new_data = [
-                size,
-                ttl_elapsed,
-                ck_time,
-                elapsed_time_poseidon,
-                line_count,
-                "v4(Bary)",
-            ]
-            res_list.append(new_data)
-            new_row = pd.DataFrame(
-                [new_data],
-                columns=[
-                    "Scale",
-                    "Time-Total",
-                    "Time-Cuckoo",
-                    "Time-Poseidon",
-                    "Lines",
-                    "Version",
-                ],
-            )
+        new_data = [
+            size,
+            ttl_elapsed,
+            ck_time,
+            elapsed_time_poseidon,
+            line_count,
+            "v4(Bary_improve)",
+        ]
+        res_list.append(new_data)
+        new_row = pd.DataFrame(
+            [new_data],
+            columns=[
+                "Scale",
+                "Time-Total",
+                "Time-Cuckoo",
+                "Time-Poseidon",
+                "Lines",
+                "Version",
+            ],
+        )
 
-            # Check if the CSV file exists
-            if not os.path.isfile(csv_file):
-                # If not, create it with header
-                new_row.to_csv(csv_file, index=False)
-            else:
-                # If it exists, append without writing the header
-                new_row.to_csv(csv_file, mode="a", header=False, index=False)
-
-        except Exception as e:
-            print(f"An error occurred in iteration {size}: {e}")
+        # Check if the CSV file exists
+        if not os.path.isfile(csv_file):
+            # If not, create it with header
+            new_row.to_csv(csv_file, index=False)
+        else:
+            # If it exists, append without writing the header
+            new_row.to_csv(csv_file, mode="a", header=False, index=False)
 
 
 if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5, 100]
+    sizes = [5]
 
     for size in sizes:
         print("\n* Running:", size)
