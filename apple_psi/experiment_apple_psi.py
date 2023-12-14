@@ -1,5 +1,7 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
+import random
+import ecdsa
 from ecdsa import SECP256k1
 import time
 import pandas as pd
@@ -17,38 +19,29 @@ from apple_psi.helper import remove_duplicates, make_secret, count_rel
 def main(size, csv_file, lagrange):
     ttl_start_time = time.time()
 
-    scale = int(size)
-    p = 115792089237316195423570985008687907853269984665640564039457584007908834671663
+    p = SECP256k1.curve.p()  # p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
-
+    g = ecdsa.ecdsa.generator_secp256k1
+    scale = int(size)
     # Apple input: Curve & generator parameters
     apple_secrets = make_secret(scale, p)
     apple_secrets = remove_duplicates(apple_secrets)
     ncmec_secrets = apple_secrets
 
-    G1_x, G1_y = (
-        2089986280348253421170679821480865132823066470938446095505822317253594081284,
-        1713931329540660377023406109199410414810705867260802078187082345529207694986,
-    )
-    G2_x, G2_y = (
-        996781205833008774514500082376783249102396023663454813447423147977397232763,
-        1668503676786377725805489344771023921079126552019160156920634619255970485781,
-    )
-    G3_x, G3_y = (
-        2251563274489750535117886426533222435294046428347329203627021249169616184184,
-        1798716007562728905295480679789526322175868328062420237419143593021674992973,
-    )
-    G4_x, G4_y = (
-        2138414695194151160943305727036575959195309218611738193261179310511854807447,
-        113410276730064486255102093846540133784865286929052426931474106396135072156,
-    )
-    G5_x, G5_y = (
-        2379962749567351885752724891227938183011949129833673362440656643086021394946,
-        776496453633298175483985398648758586525933812536653089401905292063708816422,
-    )
+    def generate_consts():
+        a_i = random.randrange(1, n)  # Random number in the range [1, n-1]
+        g_i = g * a_i  # Raise the base point, g, by a_i
+        return (g_i.x(), g_i.y())
 
+    G1_x, G1_y = generate_consts()
+    G2_x, G2_y = generate_consts()
+    G3_x, G3_y = generate_consts()
+    G4_x, G4_y = generate_consts()
+    G5_x, G5_y = generate_consts()
+
+    file_path = "irs/picozk_test_" + lagrange + "_" + str(size)
     # Simulating Apple confirming their data is same as NCMEC image data
-    with PicoZKCompiler("irs/picozk_test_" + str(size), field=[p, n]):
+    with PicoZKCompiler(file_path, field=[p, n]):
         print(f"Building Parameters", end="\r", flush=True)
         start_time = time.time()
         poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
@@ -105,8 +98,6 @@ def main(size, csv_file, lagrange):
 
         ttl_end_time = time.time()
         ttl_elapsed = ttl_end_time - ttl_start_time
-
-        file_path = "irs/picozk_test"
         line_count = count_rel(file_path)
 
         version = lagrange
@@ -166,9 +157,9 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5, 50, 100]
+    sizes = [250, 500, 1000]
 
-    lagrangeMethods = ["No Lagrange", "BaryCentric", "Standard"]
+    lagrangeMethods = ["NoLagrange"]
     for size in sizes:
         for lagrange in lagrangeMethods:
             print("\n* Running:", size, f"Lagerange Type: {lagrange}")

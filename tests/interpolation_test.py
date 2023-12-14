@@ -65,7 +65,7 @@ class Test_Base(unittest.TestCase):
                 ),
             ]
 
-            lagrange = "Standard"  # Chose from Standard, BaryCentric, No Lagrange
+            lagrange = "Standard"  # Chose from Standard, BaryCentric, NoLagrange
             print(f"\nRunning with Larange Interpolation by {lagrange}")
             cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
                 apple_secrets, p, Points, alpha, epsilon, lagrange
@@ -76,7 +76,7 @@ class Test_Base(unittest.TestCase):
                 gelm = (val_of(_gelm.x), val_of(_gelm.y))
                 assert gelm == test_d[idx]
 
-            lagrange = "BaryCentric"  # Chose from Standard, BaryCentric, No Lagrange
+            lagrange = "BaryCentric"  # Chose from Standard, BaryCentric, NoLagrange
             print(f"\nRunning with Larange Interpolation by {lagrange}")
             cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
                 apple_secrets, p, Points, alpha, epsilon, lagrange

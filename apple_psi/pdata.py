@@ -54,14 +54,15 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon, lagrange):
         xs.append(idx)
         ys.append(gelm)
 
-    if lagrange == "No Lagrange":
+    if lagrange == "NoLagrange":
+        print(f"Skipping Lagrange Polynomial...")
         lagrange_bases = None
         poly_degree = None
         return cuckoo_table, non_emplist, lagrange_bases, poly_degree
 
     elif lagrange == "Standard":
         # Calculate bots by the polynomial above
-        print(f"Lagrange Polynomial...", end="\r", flush=True)
+        print(f"Lagrange Polynomial {lagrange} method...")
         start_time = time.time()
         lagrange_bases, poly_degree = calc_lagrange_terms(xs, ys, cuckoo_table, p)
         for bot_idx in emptyList:
@@ -75,7 +76,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon, lagrange):
 
     elif lagrange == "BaryCentric":
         # Calculate bots by the polynomial above
-        print(f"Lagrange Polynomial...", end="\r", flush=True)
+        print(f"Lagrange Polynomial {lagrange} method...")
         start_time = time.time()
         lagrange_bases, poly_degree = calc_lagrange_terms_bary(xs, ys, cuckoo_table, p)
         for bot_idx in emptyList:
