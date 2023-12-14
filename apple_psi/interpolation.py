@@ -12,16 +12,20 @@ def calc_bary_weights(xs, ys, p):
     np.fill_diagonal(diffs, 1)  # Avoid division by zero
 
     # Non-vectorized computation of weights due to modular inverse
-    bary_weights = np.array([modular_inverse(np.prod(diffs[j, :]) % p, p) for j in range(n)])
+    bary_weights = np.array(
+        [modular_inverse(np.prod(diffs[j, :]) % p, p) for j in range(n)]
+    )
     return bary_weights
 
 
 # https://en.wikipedia.org/wiki/Lagrange_polynomial#Barycentric_form
 def calc_lagrange_terms_bary(xs, ys, cuckoo_table, p):
     bary_weights = calc_bary_weights(xs, ys, p)
-    
+
     xs = np.array(xs)
-    ys = np.array(ys, dtype=object)  # Assuming ys are custom objects that support vectorized operations
+    ys = np.array(
+        ys, dtype=object
+    )  # Assuming ys are custom objects that support vectorized operations
     n = len(xs)
 
     # Precompute modular inverses for all unique differences
@@ -40,7 +44,9 @@ def calc_lagrange_terms_bary(xs, ys, cuckoo_table, p):
         if x in xs:
             denominators[x] = 1
         else:
-            inverse_diffs = np.array([precomputed_inverses[(x - xm) % p] for xm in xs], dtype=object)
+            inverse_diffs = np.array(
+                [precomputed_inverses[(x - xm) % p] for xm in xs], dtype=object
+            )
             denominators[x] = np.sum(bary_weights * inverse_diffs) % p
 
     # Compute terms
@@ -50,7 +56,9 @@ def calc_lagrange_terms_bary(xs, ys, cuckoo_table, p):
             index = np.where(xs == x)[0][0]
             lagrange_bases[x] = [ys[index]]
         else:
-            inverse_diffs = np.array([precomputed_inverses[(x - xj) % p] for xj in xs], dtype=object)
+            inverse_diffs = np.array(
+                [precomputed_inverses[(x - xj) % p] for xj in xs], dtype=object
+            )
             nums = (bary_weights * inverse_diffs) % p
             scalers = (nums * modular_inverse(denominators[x], p)) % p
             terms = [y.scale(scaler) for y, scaler in zip(ys, scalers)]
@@ -91,7 +99,7 @@ def calc_lagrange_terms(xs, ys, cuckoo_table, p):
             term = term.scale(numerator * denominators[i] % p)
             terms.append(term)
         lagrange_bases[idx] = terms
-    return lagrange_bases, n-1
+    return lagrange_bases, n - 1
 
 
 def calc_polynomial(idx, lagrange_bases):

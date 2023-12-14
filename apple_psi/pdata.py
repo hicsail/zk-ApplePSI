@@ -58,7 +58,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon, lagrange):
         lagrange_bases = None
         poly_degree = None
         return cuckoo_table, non_emplist, lagrange_bases, poly_degree
-    
+
     elif lagrange == "Standard":
         # Calculate bots by the polynomial above
         print(f"Lagrange Polynomial...", end="\r", flush=True)
