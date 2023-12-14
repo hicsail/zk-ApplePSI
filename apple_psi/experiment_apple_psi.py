@@ -14,7 +14,7 @@ from apple_psi.psi_main import apple_psi
 from apple_psi.helper import remove_duplicates, make_secret, count_rel
 
 
-def main(size, csv_file):
+def main(size, csv_file, lagrange):
     ttl_start_time = time.time()
 
     scale = int(size)
@@ -69,7 +69,6 @@ def main(size, csv_file):
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
-        lagrange = "No Lagrange"  # Chose from Standard, BaryCentric, No Lagrange
         print(f"\nRunning with Larange Interpolation by {lagrange}")
         print(f"Making Cuckoo", end="\r", flush=True)
         ck_start_time = time.time()
@@ -167,9 +166,11 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [5, 50]
+    sizes = [5, 50, 100]
 
+    lagrangeMethods = ["No Lagrange", "BaryCentric", "Standard"]
     for size in sizes:
-        print("\n* Running:", size)
-        gc.collect()
-        main(size, csv_file)
+        for lagrange in lagrangeMethods:
+            print("\n* Running:", size, f"Lagerange Type: {lagrange}")
+            gc.collect()
+            main(size, csv_file, lagrange)
