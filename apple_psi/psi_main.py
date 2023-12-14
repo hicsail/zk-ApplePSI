@@ -39,12 +39,12 @@ def apple_psi(
         table_elm = cuckoo_table.get_item_at(idx)
         assert0(gelm.x - table_elm.x)
         assert0(gelm.y - table_elm.y)
+    if lagrange_bases!=None:
+        print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
+        # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
+        for idx, val in enumerate(cuckoo_table.table):
+            gelm = calc_polynomial(idx, lagrange_bases)
+            assert gelm.x == val.x
+            assert gelm.y == val.y
 
-    print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
-    # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
-    for idx, val in enumerate(cuckoo_table.table):
-        gelm = calc_polynomial(idx, lagrange_bases)
-        assert gelm.x == val.x
-        assert gelm.y == val.y
-
-    assert poly_degree == len(non_emplist) - 1
+        assert poly_degree == len(non_emplist) - 1

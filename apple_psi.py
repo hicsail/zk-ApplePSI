@@ -64,8 +64,10 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
+        lagrange =  "Standard" # Chose from Standard, BaryCentric, No Lagrange
+        print(f"\nRunning with Larange Interpolation by {lagrange}")
         cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
-            apple_secrets, p, Points, alpha, epsilon
+            apple_secrets, p, Points, alpha, epsilon, lagrange
         )
 
         Points = [

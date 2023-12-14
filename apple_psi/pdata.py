@@ -36,7 +36,7 @@ def calc_table_size(secrets, epsilon):
     return table_size
 
 
-def make_Cuckoo(secrets, p, Points, alpha, epsilon):
+def make_Cuckoo(secrets, p, Points, alpha, epsilon, lagrange):
     # Make a Cuckoo table
     table_size = calc_table_size(secrets, epsilon)
     cuckoo_table = CuckooTable(secrets, table_size, p)
@@ -54,15 +54,35 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
         xs.append(idx)
         ys.append(gelm)
 
-    # Calculate bots by the polynomial above
-    print(f"Lagrange Polynomial...", end="\r", flush=True)
-    start_time = time.time()
-    lagrange_bases, poly_degree = calc_lagrange_terms_bary(xs, ys, cuckoo_table, p)
-    for bot_idx in emptyList:
-        bot = calc_polynomial(bot_idx, lagrange_bases)
-        cuckoo_table.set_table_at(bot_idx, bot)
-    end_time = time.time()
-    print(f"Lagrange Polynomial Done...", end="\r", flush=True)
-    lagrange_time = end_time - start_time
-    print(f"\n Lagrange Took {lagrange_time} sec")
-    return cuckoo_table, non_emplist, lagrange_bases, poly_degree
+    if lagrange == "No Lagrange":
+        lagrange_bases = None
+        poly_degree = None
+        return cuckoo_table, non_emplist, lagrange_bases, poly_degree
+    
+    elif lagrange == "Standard":
+        # Calculate bots by the polynomial above
+        print(f"Lagrange Polynomial...", end="\r", flush=True)
+        start_time = time.time()
+        lagrange_bases, poly_degree = calc_lagrange_terms(xs, ys, cuckoo_table, p)
+        for bot_idx in emptyList:
+            bot = calc_polynomial(bot_idx, lagrange_bases)
+            cuckoo_table.set_table_at(bot_idx, bot)
+        end_time = time.time()
+        print(f"Lagrange Polynomial Done...", end="\r", flush=True)
+        lagrange_time = end_time - start_time
+        print(f"\n Lagrange Took {lagrange_time} sec")
+        return cuckoo_table, non_emplist, lagrange_bases, poly_degree
+
+    elif lagrange == "BaryCentric":
+        # Calculate bots by the polynomial above
+        print(f"Lagrange Polynomial...", end="\r", flush=True)
+        start_time = time.time()
+        lagrange_bases, poly_degree = calc_lagrange_terms_bary(xs, ys, cuckoo_table, p)
+        for bot_idx in emptyList:
+            bot = calc_polynomial(bot_idx, lagrange_bases)
+            cuckoo_table.set_table_at(bot_idx, bot)
+        end_time = time.time()
+        print(f"Lagrange Polynomial Done...", end="\r", flush=True)
+        lagrange_time = end_time - start_time
+        print(f"\n Lagrange Took {lagrange_time} sec")
+        return cuckoo_table, non_emplist, lagrange_bases, poly_degree

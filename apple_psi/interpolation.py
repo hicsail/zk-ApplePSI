@@ -91,7 +91,7 @@ def calc_lagrange_terms(xs, ys, cuckoo_table, p):
             term = term.scale(numerator * denominators[i] % p)
             terms.append(term)
         lagrange_bases[idx] = terms
-    return lagrange_bases
+    return lagrange_bases, n-1
 
 
 def calc_polynomial(idx, lagrange_bases):

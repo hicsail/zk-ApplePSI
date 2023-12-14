@@ -69,11 +69,13 @@ def main(size, csv_file):
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
+        lagrange =  "No Lagrange" # Chose from Standard, BaryCentric, No Lagrange
+        print(f"\nRunning with Larange Interpolation by {lagrange}")
         print(f"Making Cuckoo", end="\r", flush=True)
         ck_start_time = time.time()
         cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
-            apple_secrets, p, Points, alpha, epsilon
-        )
+                apple_secrets, p, Points, alpha, epsilon, lagrange
+            )
         ck_end_time = time.time()
         ck_time = ck_end_time - ck_start_time
 
