@@ -31,6 +31,9 @@ jobs:
           git clone https://github.com/uvm-plaid/picozk.git
           cd picozk
           pip install .
+      - name: Make irs dir
+        run: |
+            mkdir irs
       - name: Run Apple PSI module
         run: python apple_psi.py
       - name: Run tests
