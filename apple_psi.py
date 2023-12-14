@@ -9,12 +9,7 @@ sys.path.insert(1, "./apple_psi")
 from apple_psi.curvepoint import CurvePoint
 from apple_psi.pdata import make_Cuckoo
 from apple_psi.psi_main import apple_psi
-
-
-def remove_duplicates(secret: list):
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
+from apple_psi.helper import remove_duplicates
 
 
 def main():

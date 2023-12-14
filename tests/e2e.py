@@ -6,12 +6,7 @@ from ecdsa import SECP256k1
 sys.path.insert(1, "./apple_psi")
 from pdata import make_Cuckoo
 from interpolation import calc_polynomial
-
-
-def remove_duplicates(secret: list):
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
+from helper import remove_duplicates
 
 
 class Test_Base(unittest.TestCase):

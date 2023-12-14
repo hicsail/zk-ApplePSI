@@ -1,52 +1,17 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from ecdsa import SECP256k1
-import random
 import time
 import pandas as pd
 import os
 import gc
-
 import sys
 
 sys.path.insert(1, ".")
 from apple_psi.curvepoint import CurvePoint
 from apple_psi.pdata import make_Cuckoo
 from apple_psi.psi_main import apple_psi
-
-
-def count(file_path):
-    file_path += ".rel"
-    # Initialize a variable to count lines
-    line_count = 0
-
-    # Open the file and read line by line
-    with open(file_path, "r") as file:
-        for line in file:
-            line_count += 1
-
-    million = 1000000
-    line_count /= million
-
-    # Print the total number of lines
-    print(f"\n Total number of lines in the file: {line_count} (* 10^6)")
-
-    return line_count
-
-
-def make_secret(scale, p):
-    res = []
-    for i in range(scale):
-        ent = random.randint(0, p)
-        res += [ent]
-
-    return res
-
-
-def remove_duplicates(secret: list):
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
+from apple_psi.helper import remove_duplicates, make_secret, count_rel
 
 
 def main(size, csv_file):
@@ -61,7 +26,6 @@ def main(size, csv_file):
     apple_secrets = remove_duplicates(apple_secrets)
     ncmec_secrets = apple_secrets
 
-    # TODO: Update the consts - Points on the elliptic curve
     G1_x, G1_y = (
         2089986280348253421170679821480865132823066470938446095505822317253594081284,
         1713931329540660377023406109199410414810705867260802078187082345529207694986,
@@ -142,7 +106,7 @@ def main(size, csv_file):
             ttl_elapsed = ttl_end_time - ttl_start_time
 
             file_path = "irs/picozk_test"
-            line_count = count(file_path)
+            line_count = count_rel(file_path)
 
             print(
                 f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel"
