@@ -92,7 +92,7 @@ def main(size, csv_file):
         alpha = SecretInt(alpha)
         apple_secrets = [SecretInt(c) for c in apple_secrets]
         non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
-        apple_psi(
+        time_res = apple_psi(
             p,
             alpha,
             apple_secrets,
@@ -110,18 +110,35 @@ def main(size, csv_file):
         file_path = "irs/picozk_test"
         line_count = count_rel(file_path)
 
-        print(
-            f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}) - {line_count}M lines in .rel"
-        )
+        version = lagrange
 
-        new_data = [
-            size,
-            ttl_elapsed,
-            ck_time,
-            elapsed_time_poseidon,
-            line_count,
-            "v4(Bary_improve)",
-        ]
+        if lagrange_bases != None:
+            output_statement = f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}, true data check {time_res[0]}, bots check {time_res[1]}) - {line_count}M lines in .rel"
+            new_data = [
+                size,
+                ttl_elapsed,
+                ck_time,
+                elapsed_time_poseidon,
+                time_res[0],
+                time_res[1],
+                line_count,
+                version,
+            ]
+        else:
+            output_statement = f"\n TTL: {ttl_elapsed} seconds to run (Poseidon: {elapsed_time_poseidon}, Cuckoo: {ck_time}, true data check {time_res[0]}) - {line_count}M lines in .rel"
+            new_data = [
+                size,
+                ttl_elapsed,
+                ck_time,
+                elapsed_time_poseidon,
+                time_res[0],
+                "-",
+                line_count,
+                version,
+            ]
+
+        print(output_statement)
+
         res_list.append(new_data)
         new_row = pd.DataFrame(
             [new_data],
@@ -130,6 +147,8 @@ def main(size, csv_file):
                 "Time-Total",
                 "Time-Cuckoo",
                 "Time-Poseidon",
+                "Time-TrueDataCheck",
+                "Time-BotsCheck",
                 "Lines",
                 "Version",
             ],
