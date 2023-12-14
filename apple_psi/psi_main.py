@@ -1,3 +1,4 @@
+import time
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from apple_psi.pedersen_hash import pedersen_hash
@@ -14,6 +15,7 @@ def apple_psi(
     cuckoo_table,
     non_emplist,
     lagrange_bases,
+    poly_degree,
 ):
     # Simulating Apple confirming their data is same as NCMEC image data
     print(f"Reconciling NCMEC Data with Apple Data", end="\r", flush=True)
@@ -21,7 +23,9 @@ def apple_psi(
     apple_digest = poseidon_hash.hash(apple_secrets)
     assert0(ncmec_digest - val_of(apple_digest))
 
+    tiem_res = []
     print(f"Reconciling True Data in Cuckoo", end="\r", flush=True)
+    group_ops_start = time.time()
     for idx, val in non_emplist:
         # Prove that the set non_emplist is a subset of the set apple_secrets
         subset_test(apple_secrets, val)
@@ -38,12 +42,22 @@ def apple_psi(
         table_elm = cuckoo_table.get_item_at(idx)
         assert0(gelm.x - table_elm.x)
         assert0(gelm.y - table_elm.y)
+    group_ops_end = time.time()
+    tiem_res.append(group_ops_end - group_ops_start)
 
-    print(f"Validating that bots are drawn from the same curve", end="\r", flush=True)
-    # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
-    for idx, val in enumerate(cuckoo_table.table):
-        gelm, d = calc_polynomial(idx, lagrange_bases)
-        assert gelm.x == val.x
-        assert gelm.y == val.y
+    if lagrange_bases != None:
+        print(
+            f"Validating that bots are drawn from the same curve", end="\r", flush=True
+        )
+        bots_check_start = time.time()
+        # Prove that all elements are on the same curve drawn by lagrange for idx in cuckoo_table.get_empty_indices():
+        for idx, val in enumerate(cuckoo_table.table):
+            gelm = calc_polynomial(idx, lagrange_bases)
+            assert gelm.x == val.x
+            assert gelm.y == val.y
+        tiem_res.append(group_ops_end - group_ops_start)
+        assert poly_degree == len(non_emplist) - 1
+        bots_check_end = time.time()
+        tiem_res.append(bots_check_end - bots_check_start)
 
-    assert d == len(non_emplist) - 1
+    return tiem_res

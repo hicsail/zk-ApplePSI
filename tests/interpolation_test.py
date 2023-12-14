@@ -46,9 +46,6 @@ class Test_Base(unittest.TestCase):
         with PicoZKCompiler("picozk_test", field=[p, n]):
             alpha = 5
             epsilon = 1
-            cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
-                apple_secrets, p, Points, alpha, epsilon
-            )
             test_d = [
                 (
                     113385371939531752299224346207750022137654760827455900656495118238958475899557,
@@ -67,14 +64,27 @@ class Test_Base(unittest.TestCase):
                     37305274461364918522140623956686657783961262461356198153573712844878370500562,
                 ),
             ]
+
+            lagrange = "Standard"  # Chose from Standard, BaryCentric, NoLagrange
+            print(f"\nRunning with Larange Interpolation by {lagrange}")
+            cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
+                apple_secrets, p, Points, alpha, epsilon, lagrange
+            )
+
             for idx, val in enumerate(cuckoo_table.table):
-                _gelm, d = calc_polynomial(idx, lagrange_bases)
+                _gelm = calc_polynomial(idx, lagrange_bases)
                 gelm = (val_of(_gelm.x), val_of(_gelm.y))
-                print("idx", idx)
-                print("")
-                print("gelm", gelm)
-                print("table", cuckoo_table.get_item_at(idx))
-                print("")
+                assert gelm == test_d[idx]
+
+            lagrange = "BaryCentric"  # Chose from Standard, BaryCentric, NoLagrange
+            print(f"\nRunning with Larange Interpolation by {lagrange}")
+            cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
+                apple_secrets, p, Points, alpha, epsilon, lagrange
+            )
+
+            for idx, val in enumerate(cuckoo_table.table):
+                _gelm = calc_polynomial(idx, lagrange_bases)
+                gelm = (val_of(_gelm.x), val_of(_gelm.y))
                 assert gelm == test_d[idx]
 
 

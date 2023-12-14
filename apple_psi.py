@@ -12,7 +12,7 @@ from apple_psi.psi_main import apple_psi
 from apple_psi.helper import remove_duplicates
 
 
-def main():
+def main(lagrange):
     # Apple input: Curve & generator parameters
     apple_secrets = [
         114303190253219474269384419659897947128561637493978467700760475363248655921884,
@@ -64,8 +64,9 @@ def main():
         # Make Cuckoo Table
         alpha = 5
         epsilon = 1
-        cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
-            apple_secrets, p, Points, alpha, epsilon
+        print(f"\nRunning with Larange Interpolation by {lagrange}")
+        cuckoo_table, non_emplist, lagrange_bases, poly_degree = make_Cuckoo(
+            apple_secrets, p, Points, alpha, epsilon, lagrange
         )
 
         Points = [
@@ -89,8 +90,10 @@ def main():
             cuckoo_table,
             non_emplist,
             lagrange_bases,
+            poly_degree,
         )
 
 
 if __name__ == "__main__":
-    main()
+    lagrange = "NoLagrange"  # Chose from Standard, BaryCentric, NoLagrange
+    main(lagrange)
