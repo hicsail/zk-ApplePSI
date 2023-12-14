@@ -36,7 +36,6 @@ class CuckooTable:
 
             if self.table[index] is None:
                 self.table[index] = item
-                evicted_item = None
                 break
 
             elif second is True and (

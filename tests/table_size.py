@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-sys.path.insert(1, "./utils")
+sys.path.insert(1, "./apple_psi")
 from pdata import calc_table_size
 
 

@@ -1,18 +1,15 @@
 import sys
+import random
+import ecdsa
+from ecdsa import SECP256k1
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
-from ecdsa import SECP256k1
 
 sys.path.insert(1, "./apple_psi")
 from apple_psi.curvepoint import CurvePoint
 from apple_psi.pdata import make_Cuckoo
 from apple_psi.psi_main import apple_psi
-
-
-def remove_duplicates(secret: list):
-    _secret = []
-    [_secret.append(x) for x in secret if x not in _secret]
-    return _secret
+from apple_psi.helper import remove_duplicates
 
 
 def main():
@@ -33,28 +30,29 @@ def main():
 
     p = SECP256k1.curve.p()  # p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
+    g = ecdsa.ecdsa.generator_secp256k1
 
-    # TODO: Update the consts - Points on the elliptic curve
-    G1_x, G1_y = (
-        2089986280348253421170679821480865132823066470938446095505822317253594081284,
-        1713931329540660377023406109199410414810705867260802078187082345529207694986,
-    )
-    G2_x, G2_y = (
-        996781205833008774514500082376783249102396023663454813447423147977397232763,
-        1668503676786377725805489344771023921079126552019160156920634619255970485781,
-    )
-    G3_x, G3_y = (
-        2251563274489750535117886426533222435294046428347329203627021249169616184184,
-        1798716007562728905295480679789526322175868328062420237419143593021674992973,
-    )
-    G4_x, G4_y = (
-        2138414695194151160943305727036575959195309218611738193261179310511854807447,
-        113410276730064486255102093846540133784865286929052426931474106396135072156,
-    )
-    G5_x, G5_y = (
-        2379962749567351885752724891227938183011949129833673362440656643086021394946,
-        776496453633298175483985398648758586525933812536653089401905292063708816422,
-    )
+    def generate_consts():
+        a_i = random.randrange(1, n)  # Random number in the range [1, n-1]
+        g_i = g * a_i  # Raise the base point, g, by a_i
+        return (g_i.x(), g_i.y())
+
+    G1_x, G1_y = generate_consts()
+    G2_x, G2_y = generate_consts()
+    G3_x, G3_y = generate_consts()
+    G4_x, G4_y = generate_consts()
+    G5_x, G5_y = generate_consts()
+
+    """ 
+        HAZMAT WARNING: The following code involves cryptographic operations
+        that include randomized elements. This approach, while functional,
+        may not adhere to standard cryptographic practices and might introduce
+        risks if used in security-sensitive applications. The randomness
+        introduced in the point generation (G1, G2, G3, G4, G5) could impact
+        the deterministic nature and reproducibility of cryptographic operations.
+        Use this code with caution, and only after thorough review and understanding
+        of its implications in the context of your specific use case.
+    """
 
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler("irs/picozk_test", field=[p, n]):

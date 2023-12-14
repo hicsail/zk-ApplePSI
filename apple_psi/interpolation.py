@@ -17,7 +17,7 @@ def calc_bary_weights(xs, ys, p):
 
 
 # https://en.wikipedia.org/wiki/Lagrange_polynomial#Barycentric_form
-def calc_lagrange_terms(xs, ys, cuckoo_table, p):
+def calc_lagrange_terms_bary(xs, ys, cuckoo_table, p):
     bary_weights = calc_bary_weights(xs, ys, p)
     
     xs = np.array(xs)

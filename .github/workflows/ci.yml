@@ -1,0 +1,40 @@
+name: Build & Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format-and-test:
+    name: Format and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Check Formatting with Black
+        run: |
+          black --check .
+      - name: Clone and install picozk
+        run: |
+          git clone https://github.com/uvm-plaid/picozk.git
+          cd picozk
+          pip install .
+      - name: Make irs dir
+        run: |
+            mkdir irs
+      - name: Run Apple PSI module
+        run: python apple_psi.py
+      - name: Run tests
+        run: python tests/run_all_tests.py

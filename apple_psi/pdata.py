@@ -1,7 +1,7 @@
 import math
 from cuckoo_table import CuckooTable
 from pedersen_hash_int import pedersen_hash_int
-from interpolation import calc_lagrange_terms, calc_polynomial
+from interpolation import calc_lagrange_terms, calc_lagrange_terms_bary, calc_polynomial
 from curvepoint import CurvePoint
 import time
 
@@ -57,7 +57,7 @@ def make_Cuckoo(secrets, p, Points, alpha, epsilon):
     # Calculate bots by the polynomial above
     print(f"Lagrange Polynomial...", end="\r", flush=True)
     start_time = time.time()
-    lagrange_bases, poly_degree = calc_lagrange_terms(xs, ys, cuckoo_table, p)
+    lagrange_bases, poly_degree = calc_lagrange_terms_bary(xs, ys, cuckoo_table, p)
     for bot_idx in emptyList:
         bot = calc_polynomial(bot_idx, lagrange_bases)
         cuckoo_table.set_table_at(bot_idx, bot)
