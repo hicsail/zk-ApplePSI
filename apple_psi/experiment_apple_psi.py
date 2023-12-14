@@ -1,6 +1,5 @@
 from picozk import *
 from picozk.poseidon_hash import PoseidonHash
-from picozk.functions import picozk_function
 from ecdsa import SECP256k1
 import random
 import time
@@ -48,20 +47,6 @@ def remove_duplicates(secret: list):
     _secret = []
     [_secret.append(x) for x in secret if x not in _secret]
     return _secret
-
-
-@picozk_function
-def subset_test(apple_secrets, curr_val):
-    final_state = 0
-    curr_state = 1
-    for i in range(len(apple_secrets)):
-        curr_state = mux(
-            curr_state == final_state,
-            curr_state,
-            mux(apple_secrets[i] == curr_val, final_state, curr_state),
-        )
-    assert0(curr_state)
-    return curr_state
 
 
 def main(size, csv_file):

@@ -36,19 +36,19 @@ def main():
     p = SECP256k1.curve.p()  # p = 2^256 - 2^32 - 2^9 - 2^8 - 2^7 - 2^6 - 2^4 - 1
     n = SECP256k1.order
     g = ecdsa.ecdsa.generator_secp256k1
-    
+
     def generate_consts():
-        a_i = random.randrange(1, n) # Random number in the range [1, n-1]
-        g_i = g * a_i # Raise the base point, g, by a_i
+        a_i = random.randrange(1, n)  # Random number in the range [1, n-1]
+        g_i = g * a_i  # Raise the base point, g, by a_i
         return (g_i.x(), g_i.y())
-    
+
     G1_x, G1_y = generate_consts()
     G2_x, G2_y = generate_consts()
     G3_x, G3_y = generate_consts()
     G4_x, G4_y = generate_consts()
     G5_x, G5_y = generate_consts()
 
-    ''' 
+    """ 
         HAZMAT WARNING: The following code involves cryptographic operations
         that include randomized elements. This approach, while functional,
         may not adhere to standard cryptographic practices and might introduce
@@ -57,7 +57,7 @@ def main():
         the deterministic nature and reproducibility of cryptographic operations.
         Use this code with caution, and only after thorough review and understanding
         of its implications in the context of your specific use case.
-    '''
+    """
 
     # Simulating Apple confirming their data is same as NCMEC image data
     with PicoZKCompiler("irs/picozk_test", field=[p, n]):

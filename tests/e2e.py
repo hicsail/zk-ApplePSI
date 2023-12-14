@@ -3,9 +3,9 @@ import sys
 from picozk import *
 from ecdsa import SECP256k1
 
-sys.path.insert(1, "./utils")
-from curvepoint import CurvePoint
+sys.path.insert(1, "./apple_psi")
 from pdata import make_Cuckoo
+from interpolation import calc_polynomial
 
 
 def remove_duplicates(secret: list):
@@ -46,19 +46,14 @@ class Test_Base(unittest.TestCase):
         p = SECP256k1.curve.p()
         n = SECP256k1.order
 
-        Points = [
-            CurvePoint(False, G1_x, G1_y, p),
-            CurvePoint(False, G2_x, G2_y, p),
-            CurvePoint(False, G3_x, G3_y, p),
-            CurvePoint(False, G4_x, G4_y, p),
-            CurvePoint(False, G5_x, G5_y, p),
-        ]
-
-        alpha = 5
-        epsilon = 1
+        Points = [(G1_x, G1_y), (G2_x, G2_y), (G3_x, G3_y), (G4_x, G4_y), (G5_x, G5_y)]
 
         with PicoZKCompiler("picozk_test", field=[p, n]):
-            cuckoo_table, poly = make_Cuckoo(apple_secrets, p, Points, alpha, epsilon)
+            alpha = 5
+            epsilon = 1
+            cuckoo_table, non_emplist, lagrange_bases = make_Cuckoo(
+                apple_secrets, p, Points, alpha, epsilon
+            )
             test_d = [
                 (
                     113385371939531752299224346207750022137654760827455900656495118238958475899557,
@@ -78,7 +73,7 @@ class Test_Base(unittest.TestCase):
                 ),
             ]
             for idx, val in enumerate(cuckoo_table.table):
-                _gelm = poly(idx)
+                _gelm, d = calc_polynomial(idx, lagrange_bases)
                 gelm = (val_of(_gelm.x), val_of(_gelm.y))
                 print("idx", idx)
                 print("")
