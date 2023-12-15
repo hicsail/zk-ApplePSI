@@ -82,16 +82,28 @@ def main(size, csv_file, lagrange):
         # Make Secrets
         print(f"Producing Pdata", end="\r", flush=True)
         alpha = SecretInt(alpha)
+        # This one for perm map access
+        _apple_secrets = ZKList(apple_secrets)
+        # This one for Poseidon Hash
         apple_secrets = [SecretInt(c) for c in apple_secrets]
+        perm_map = [
+            SecretInt(sec_idx)
+            for sec_idx in cuckoo_table.perm_map
+            if sec_idx is not None
+        ]
+        # Make it unaccessible perm map
+        cuckoo_table.perm_map = None
         non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
         time_res = apple_psi(
             p,
             alpha,
             apple_secrets,
+            _apple_secrets,
             ncmec_digest,
             Points,
             cuckoo_table,
             non_emplist,
+            perm_map,
             lagrange_bases,
             poly_degree,
         )
@@ -157,7 +169,7 @@ if __name__ == "__main__":
     # Importing ENV Var & Checking if prime meets our requirement
     res_list = []
     csv_file = "Apple_analysis.csv"
-    sizes = [250, 500, 1000]
+    sizes = [500, 1000]
 
     lagrangeMethods = ["NoLagrange"]
     for size in sizes:
