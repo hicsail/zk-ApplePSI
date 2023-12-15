@@ -3,17 +3,18 @@ from picozk import *
 from picozk.poseidon_hash import PoseidonHash
 from apple_psi.pedersen_hash import pedersen_hash
 from apple_psi.interpolation import calc_polynomial
-from apple_psi.helper import subset_test
 
 
 def apple_psi(
     p,
     alpha,
     apple_secrets,
+    _apple_secrets,
     ncmec_digest,
     Points,
     cuckoo_table,
     non_emplist,
+    perm_map,
     lagrange_bases,
     poly_degree,
 ):
@@ -26,9 +27,11 @@ def apple_psi(
     tiem_res = []
     print(f"Reconciling True Data in Cuckoo", end="\r", flush=True)
     group_ops_start = time.time()
+    perm_idx = 0
     for idx, val in non_emplist:
         # Prove that the set non_emplist is a subset of the set apple_secrets
-        subset_test(apple_secrets, val)
+        assert0(_apple_secrets[perm_map[perm_idx]] - val)
+        perm_idx += 1
 
         # Prove that each real element exists in hash one or two
         h1 = cuckoo_table.hash_one(val)

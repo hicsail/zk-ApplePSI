@@ -79,16 +79,27 @@ def main(lagrange):
 
         # Make Secrets
         alpha = SecretInt(alpha)
-        apple_secrets = [SecretInt(c) for c in apple_secrets]
+        _apple_secrets = ZKList(apple_secrets)  # This one for perm map access
+        apple_secrets = [
+            SecretInt(c) for c in apple_secrets
+        ]  # This one for Poseidon Hash
+        perm_map = [
+            SecretInt(sec_idx)
+            for sec_idx in cuckoo_table.perm_map
+            if sec_idx is not None
+        ]
+        cuckoo_table.perm_map = None  # Make it unaccessible perm map
         non_emplist = [(idx, SecretInt(elm)) for (idx, elm) in non_emplist]
         apple_psi(
             p,
             alpha,
             apple_secrets,
+            _apple_secrets,
             ncmec_digest,
             Points,
             cuckoo_table,
             non_emplist,
+            perm_map,
             lagrange_bases,
             poly_degree,
         )

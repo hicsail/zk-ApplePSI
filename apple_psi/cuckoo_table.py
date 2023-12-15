@@ -8,13 +8,14 @@ class CuckooTable:
         self.p = p
         self.table_size = table_size
         self.table = [None] * self.table_size
+        self.perm_map = [None] * self.table_size
         self.non_emplist = []
         self.bulk_set(secrets)
 
     def bulk_set(self, secrets):
-        for item in secrets:
+        for sec_idx, item in enumerate(secrets):
             self.orig_item = None
-            self.set_item(item)
+            self.set_item(sec_idx, item)
 
     def hash_one(self, item):
         return ((99529 * item + 37309) % self.p) % self.table_size
@@ -22,7 +23,7 @@ class CuckooTable:
     def hash_two(self, item):
         return ((86837 * item + 40637) % self.p) % self.table_size
 
-    def set_item(self, item, second=False):
+    def set_item(self, sec_idx, item, second=False):
         loop_history = 0
 
         while True:
@@ -36,6 +37,7 @@ class CuckooTable:
 
             if self.table[index] is None:
                 self.table[index] = item
+                self.perm_map[index] = sec_idx
                 break
 
             elif second is True and (
@@ -47,6 +49,7 @@ class CuckooTable:
             else:
                 # Swap the item at the index with the new item and try again
                 item, self.table[index] = self.table[index], item
+                sec_idx, self.perm_map[index] = self.perm_map[index], sec_idx
                 second = True
             loop_history += 1
 
