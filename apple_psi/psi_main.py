@@ -27,11 +27,10 @@ def apple_psi(
     tiem_res = []
     print(f"Reconciling True Data in Cuckoo", end="\r", flush=True)
     group_ops_start = time.time()
-    perm_idx = 0
-    for idx, val in non_emplist:
+    
+    for perm_idx, (idx, val) in enumerate(non_emplist):
         # Prove that the set non_emplist is a subset of the set apple_secrets
         assert0(_apple_secrets[perm_map[perm_idx]] - val)
-        perm_idx += 1
 
         # Prove that each real element exists in hash one or two
         h1 = cuckoo_table.hash_one(val)
