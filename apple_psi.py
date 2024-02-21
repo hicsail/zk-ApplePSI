@@ -55,7 +55,7 @@ def main(lagrange):
     """
 
     # Simulating Apple confirming their data is same as NCMEC image data
-    with PicoZKCompiler("irs/picozk_test", field=[p, n]):
+    with PicoZKCompiler("irs/picozk_test", field=[p, n], options=["ram"]):
         poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)
