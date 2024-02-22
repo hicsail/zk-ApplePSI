@@ -30,7 +30,7 @@ Now you have a brand new container running on your machine
 
 ## 🖥️ Getting started
 
-<strong> 0) Enter Docker Shell</strong> 
+<strong> Enter Docker Shell</strong> 
 
 Since you have a running container, you can subsequently run the following command in your terminal to start Docker Shell:
 
@@ -49,7 +49,7 @@ If you see something like the following in your command line, you are successful
 </ul>
 
 
-<strong> 1) Install wiztoolkit</strong> 
+<strong> Install wiztoolkit</strong> 
 
 Inside the container, clone wiztoolkit repo and move into wiztoolkit:
 
@@ -67,33 +67,6 @@ make
 make install
 ```
 
-
-<strong> 2) Clone picozk</strong> 
-
-Clone the repository and then install with `pip install`:
-
-```
-git clone git@github.mit.edu:sieve-all/picozk.git
-cd picozk
-pip install .
-```
-
-Note) Due to the transition of picozk, you need setup.py in the picozk dir:
-```
-from setuptools import setup
-
-setup(name='picozk',
-      version='0.2',
-      description='PicoZK library & compiler for writing zero-knowledge statements',
-      url='none',
-      author='Joe Near',
-      author_email='jnear@uvm.edu',
-      license='GPLv3',
-      install_requires=[],
-      packages=['picozk', 'picozk/poseidon_hash'],
-      zip_safe=False)
-
-```
 
 ## 🏋️‍♀️ Run your python script and firealarm test module inside the container
 
