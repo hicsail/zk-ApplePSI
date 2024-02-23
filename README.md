@@ -1,6 +1,6 @@
-# SIEVE-IR-Phase3
+# zk-ApplePSI
 
-SIEVE-IR-Phase3 project provides an E2E pipeline, under picoZK, to implement Zero-Knowledge Proof.
+zk-ApplePSI project provides an E2E pipeline to implement Zero-Knowledge Proof.
 
 ----
 
