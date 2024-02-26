@@ -1,13 +1,21 @@
-# SIEVE-IR-Phase3
+# zk-ApplePSI
 
-SIEVE-IR-Phase3 project provides an E2E pipeline, under picoZK, to implement Zero-Knowledge Proof.
+zk-ApplePSI project provides an E2E pipeline to implement Zero-Knowledge Proof.
 
 ----
 
 ## 📖 Setting up
 
-Clone this repo:
+<strong> Option A Use published docker image </strong>
 
+Run this in command line:
+```
+docker run --platform linux/amd64 -it hicsail/zk-apple-psi:main      
+```
+
+<strong> Option B Clone Repo </strong>
+
+Run this in command line:
 ```
 git clone git@github.com:hicsail/SIEVE-IR-Phase3.git
 ```
