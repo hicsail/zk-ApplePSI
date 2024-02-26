@@ -8,14 +8,14 @@ zk-ApplePSI project provides an E2E pipeline to implement Zero-Knowledge Proof.
 
 <strong> Option A Use published docker image </strong>
 
-Run this in command line:
+Run this in the command line:
 ```
 docker run --platform linux/amd64 -it hicsail/zk-apple-psi:main      
 ```
 
 <strong> Option B Clone Repo </strong>
 
-Run this in command line:
+Run this in the command line:
 ```
 git clone git@github.com:hicsail/SIEVE-IR-Phase3.git
 ```
@@ -26,7 +26,7 @@ Move into the root directory of the project
 cd SIEVE-IR-PHASE3
 ```
 
-Inside the root directory, run build image:
+Inside the root directory, run the build image:
 
 ```
 docker-compose up -d --build
@@ -51,7 +51,7 @@ You can get a containerID from the docker desktop app by clicking the small butt
     <img width="1161" alt="image" src="https://user-images.githubusercontent.com/62607343/203409123-1a95786f-8b2a-4e71-a920-3a51cf50cf0f.png">
 </ul>
 
-If you see something like the following in your command line, you are successfully inside docker shell
+If you see something like the following in your command line, you are successfully inside the docker shell
 <ul>
 <img width="300" alt="image" src="https://user-images.githubusercontent.com/62607343/203413803-19021cb9-07ba-4376-ade0-dbdc6c8506c5.png">
 </ul>
@@ -76,17 +76,18 @@ make install
 ```
 
 
-## 🏋️‍♀️ Run your python script and firealarm test module inside the container
+## 🏋️‍♀️ Run your Python script and firealarm test module inside the container
 
-You can run your python script in docker shell and compile by picozk in the following command. 
+You can run your Python script and check the output format in the docker shell by the following command:
 
 ```
 /bin/bash ./run_IR0.sh -f apple_psi 
 ```
 
-This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a><br> and checks the format of the output statements.
+This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a> and checks the format of the output statements.<br>
 
-Alternatively, you can run just the Python statement as below inside the container:
+Alternatively, you can run just the Python statement inside the container:
+
 ```
 python3 apple_psi.py
 ```
