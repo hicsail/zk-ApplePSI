@@ -84,4 +84,9 @@ You can run your python script in docker shell and compile by picozk in the foll
 /bin/bash ./run_IR0.sh -f apple_psi 
 ```
 
-This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a><br>
+This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a><br> and checks the format of the output statements.
+
+Alternatively, you can run just the Python statement as below inside the container:
+```
+python3 apple_psi.py
+```
