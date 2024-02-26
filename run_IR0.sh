@@ -26,8 +26,8 @@ fi
 
 if [ -z "$target" ]
     then
-        target="./tests"
-        echo "test directory is set to './tests' "
+        target="./irs"
+        echo "test directory is set to './irs' "
 fi
 
 if [ -z "$size" ]
@@ -56,6 +56,19 @@ python3 $dir$file.py
 dirlist=`ls irs`
 echo $dirlist
 
+# firealarm format check
+
+# Check if wtk-firealarm is installed.
+if ! command -v wtk-firealarm >/dev/null 2>&1; then
+    echo "wtk-firealarm is not installed. Please follow the instructions below to install it:"
+    echo "  git clone git@github.mit.edu:sieve-all/wiztoolkit.git"
+    echo "  cd wiztoolkit && make && make install"
+    echo "  cp /usr/src/app/wiztoolkit/target/wtk-firealarm /usr/bin/wtk-firealarm"
+    echo "  cd .. #Go back to the current directory"
+    exit 1
+fi
+
+
 # Creat dir
 mkdir -p irs/wit
 mkdir -p irs/ins
@@ -63,7 +76,11 @@ mkdir -p irs/ins
 # Run firealarm test
 cd irs && wtk-firealarm $dirlist && cd ..
 
-echo "wtk-firealarm successfully completed"
+if wtk-firealarm "$rel" "$wit" "$ins"; then
+    echo "wtk-firealarm successfully completed"
+else
+    echo "Error during wtk-firealarm"
+fi
 
 # Copy into directory compatible with mac-and-cheese
 for ir in ${dirlist}
