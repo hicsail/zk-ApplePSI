@@ -160,7 +160,10 @@ class PoseidonHash:
 
     def hash(self, input_vec):
         padded = input_vec + [0 for _ in range(self.t - (len(input_vec) % self.t))]
-        blocks = [padded[i * self.t : (i + 1) * self.t] for i in range((len(padded) + self.t - 1) // self.t)]
+        blocks = [
+            padded[i * self.t : (i + 1) * self.t]
+            for i in range((len(padded) + self.t - 1) // self.t)
+        ]
         for i, b in enumerate(blocks):
             self.state = self.hash_block(b, self.state)
 
