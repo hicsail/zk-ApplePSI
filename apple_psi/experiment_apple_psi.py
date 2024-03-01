@@ -44,7 +44,8 @@ def main(size, csv_file, lagrange):
     with PicoZKCompiler(file_path, field=[p, n]):
         print(f"Building Parameters", end="\r", flush=True)
         start_time = time.time()
-        poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
+        const_file = "const_data_apple.pkl"
+        poseidon_hash = PoseidonHash(const_file, p, alpha=17, input_rate=3)
         ncmec_secret_data = [SecretInt(c) for c in ncmec_secrets]
         print(f"Hashing Images", end="\r", flush=True)
         ncmec_digest = poseidon_hash.hash(ncmec_secret_data)

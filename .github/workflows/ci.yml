@@ -29,6 +29,7 @@ jobs:
       - name: Clone and install picozk
         run: |
           git clone https://github.com/uvm-plaid/picozk.git
+          cp ./consts/poseidon_hash.py ./picozk/picozk/poseidon_hash/poseidon_hash.py
           cd picozk
           pip install .
       - name: Make irs dir

@@ -20,7 +20,8 @@ def apple_psi(
 ):
     # Simulating Apple confirming their data is same as NCMEC image data
     print(f"Reconciling NCMEC Data with Apple Data", end="\r", flush=True)
-    poseidon_hash = PoseidonHash(p, alpha=17, input_rate=3)
+    const_file = "const_data_apple.pkl"
+    poseidon_hash = PoseidonHash(const_file, p, alpha=17, input_rate=3)
     apple_digest = poseidon_hash.hash(apple_secrets)
     assert0(ncmec_digest - val_of(apple_digest))
 
