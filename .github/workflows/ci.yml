@@ -16,6 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up PyPy3
+        uses: actions/setup-python@v3
+        with:
+          python-version: 'pypy-3.10'
+      - name: Install dependencies
         run: |
           pypy3 -m ensurepip
           pypy3 -m pip install --upgrade pip
