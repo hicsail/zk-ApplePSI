@@ -91,3 +91,19 @@ Alternatively, you can run just the Python statement inside the container:
 ```
 python3 apple_psi.py
 ```
+
+
+## 🧪 Experiment with Different Setup
+
+The current file contains <a href="https://github.com/hicsail/zk-ApplePSI/blob/a2586bde0d485e65a9a3a8eb37e394081b315d2a/apple_psi.py#L17-L28">    sample inputs of images in a vector </a>.
+If you would like to experiment with a different set of images, you can modify the vector. Be sure to match both apple_secrets and ncmec_secrets; otherwise, the proof will fail.
+
+<img width="699" alt="image" src="https://github.com/hicsail/zk-ApplePSI/assets/62607343/c8863686-45a6-4913-9361-57c98b5f57ea">
+
+
+You may also choose a form of Lagrange interpolation. For simplicity, the default setting skips Lagrange interpolation to demonstrate that bots in a cuckoo table are generated from the same polynomial as the true data, because this proof is performed outside of zk. However, should you wish to see this part in the action, you could choose either the <a href="https://en.wikipedia.org/wiki/Lagrange_polynomial#:~:text=of%20large%20oscillation.-,Definition,-%5Bedit%5D"> "Standard" method </a> or <a href="https://en.wikipedia.org/wiki/Lagrange_polynomial#:~:text=.-,Barycentric%20form,-%5Bedit%5D"> "BaryCentric" method </a> by changing the Lagrange variable in <a href="https://github.com/hicsail/zk-ApplePSI/blob/a2586bde0d485e65a9a3a8eb37e394081b315d2a/apple_psi.py#L110"> this line </a>.
+
+
+
+<img width="626" alt="image" src="https://github.com/hicsail/zk-ApplePSI/assets/62607343/36a8d6b3-5890-4fe0-bc2b-29594fc00d1c">
+
