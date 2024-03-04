@@ -15,15 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up PyPy3
-        uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: 'pypy-3.10'
+          python-version: '3.10'
       - name: Install dependencies
         run: |
-          pypy3 -m ensurepip
-          pypy3 -m pip install --upgrade pip
-          pypy3 -m pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Check Formatting with Black
         run: |
           black --check .
@@ -32,14 +31,14 @@ jobs:
           git clone https://github.com/uvm-plaid/picozk.git
           cp ./consts/poseidon_hash.py ./picozk/picozk/poseidon_hash/poseidon_hash.py
           cd picozk
-          pypy3 -m pip install .
-      - name: Make irs directory
-        run: mkdir irs
+          pip install .
+      - name: Make irs dir
+        run: |
+            mkdir irs
       - name: Run Apple PSI module
-        run: pypy3 apple_psi.py
+        run: python apple_psi.py
       - name: Run tests
-        run: pypy3 tests/run_all_tests.py
-
+        run: python tests/run_all_tests.py
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
