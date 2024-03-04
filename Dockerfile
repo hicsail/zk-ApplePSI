@@ -3,4 +3,4 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-CMD [ "sleep", "infinity" ] 
+CMD [ "sleep", "infinity" ]
