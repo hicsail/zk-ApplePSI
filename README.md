@@ -96,7 +96,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 pip install picozk/.
 ```
-The following will 
+
+The following will run the main file:
 ```
 python3 zk-ApplePSI.py  # or pypy3 zk-ApplePSI.py
 ```
