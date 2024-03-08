@@ -1,44 +1,39 @@
 # zk-ApplePSI
 
-zk-ApplePSI project provides an E2E pipeline to implement Zero-Knowledge Proof.
+zk-ApplePSI repository provides an E2E pipeline, supported by picozk, to test differential privacy under Zero-Knowledge Proof.
 
 ----
 
-## 📖 Setting up
+## Quick Navigation
 
-<strong> Option A Use published docker image </strong>
+- [Use Docker](#-use-docker)
+- [Run Locally](#-run-locally)
+- [Different Setup](#-diff-setup)
 
-Run this in the command line:
+## 🐳 [Use Docker](#-use-docker)
+
+
+#### 🚧 Build Docker Image and Run Container
+
+<i> <strong> Option A Use published docker image </strong> </i> 
+
+Run this line of code in the command line:
 ```
 docker run --platform linux/amd64 -it hicsail/zk-apple-psi:main      
 ```
 
-<strong> Option B Clone Repo </strong>
+<i> <strong> Option B Clone Repo </strong> </i> 
 
-Run this in the command line:
+Run the following in the command line to get the container up and running:
 ```
-git clone git@github.com:hicsail/SIEVE-IR-Phase3.git
-```
-
-Move into the root directory of the project
-
-```
-cd SIEVE-IR-PHASE3
+git clone https://github.com/hicsail/zk-ApplePSI.git     # Clone the repository
+cd zk-ApplePSI                                           # Move into the root directory of the project
+docker-compose up -d --build                             # Inside the root directory, run the build image:
 ```
 
-Inside the root directory, run the build image:
+#### 🖥️ Getting started
 
-```
-docker-compose up -d --build
-```
-
-Now you have a brand new container running on your machine
-
-
-
-## 🖥️ Getting started
-
-<strong> Enter Docker Shell</strong> 
+<strong> Step1: Enter Docker Shell</strong> 
 
 Since you have a running container, you can subsequently run the following command in your terminal to start Docker Shell:
 
@@ -46,7 +41,7 @@ Since you have a running container, you can subsequently run the following comma
 docker exec -it <containerID> bash
 ```
 
-You can get a containerID from the docker desktop app by clicking the small button highlighted in the red circle
+You can get a container-ID from the docker desktop app by clicking the small button highlighted in the red circle
 <ul>
     <img width="1161" alt="image" src="https://user-images.githubusercontent.com/62607343/203409123-1a95786f-8b2a-4e71-a920-3a51cf50cf0f.png">
 </ul>
@@ -57,43 +52,56 @@ If you see something like the following in your command line, you are successful
 </ul>
 
 
-<strong> Install wiztoolkit</strong> 
+<strong> Step2: Install wiztoolkit</strong> 
 
-Inside the container, clone wiztoolkit repo and move into wiztoolkit:
+We are using Fire Alarm, one of wiztoolkit packages.
+After entering the container, clone wiztoolkit repo and run the following commands to install wiztoolkit:
 
-(*) You might need to set up ssh key - Follow <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux"> the instruction </a>
+(* You might need to set up ssh key - Follow <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux"> the instruction </a>)
 
 ```
 git clone git@github.mit.edu:sieve-all/wiztoolkit.git
 cd wiztoolkit
-```
-
-And run the following commands to install wiztoolkit (Backend for IR0):
-
-```
 make
 make install
 ```
 
 
-## 🏋️‍♀️ Run your Python script and firealarm test module inside the container
+### 🏋️‍♀️ Run the shell script
 
-You can run your Python script and check the output format in the docker shell by the following command:
+Now all setups are done for you to run your Python script inside the docker shell.
+Run the following command in the docker shell, and you will see the Python script,<a <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a>, generating zk statements and fire-alarm checks the format of the statements:
 
 ```
 /bin/bash ./run_IR0.sh -f apple_psi 
 ```
 
-This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a> and checks the format of the output statements.<br>
+## 👨‍💻 [Run Locally](#-run-locally)
 
-Alternatively, you can run just the Python statement inside the container:
+This option doesn't require Docker, while it focuses on running the Python scripts, skipping setting Fire Alarm.
+
+Run this in the command line:
+```
+git clone git@github.com:hicsail/zk-ApplePSI.git 
+```
+
+Move into the root directory of the project
 
 ```
-python3 apple_psi.py
+cd zk-ApplePSI
+cp ./consts/poseidon_hash.py ./picozk/picozk/poseidon_hash/poseidon_hash.py
+python3 -m venv venv           # or pypy3 -m venv myenv
+source venv/bin/activate       # or source myenv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+pip install picozk/.
+```
+The following will 
+```
+python3 zk-ApplePSI.py  # or pypy3 zk-ApplePSI.py
 ```
 
-
-## 🧪 Experiment with Different Setup
+## 🧪 [Different Setup](#-diff-setup)
 
 The current file contains <a href="https://github.com/hicsail/zk-ApplePSI/blob/a2586bde0d485e65a9a3a8eb37e394081b315d2a/apple_psi.py#L17-L28">    sample inputs of images in a vector </a>.
 If you would like to experiment with a different set of images, you can modify the vector. Be sure to match both apple_secrets and ncmec_secrets; otherwise, the proof will fail.
