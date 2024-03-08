@@ -85,7 +85,7 @@ Run this in the command line:
 git clone git@github.com:hicsail/zk-ApplePSI.git 
 ```        
 
-Move into the root directory of the project
+Move into the root directory of the project and install dependencies
 
 ```
 cd zk-ApplePSI
