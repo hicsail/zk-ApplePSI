@@ -8,7 +8,7 @@ zk-ApplePSI repository provides an E2E pipeline, supported by picozk, to test di
 
 - [Use Docker](#-use-docker)
 - [Run Locally](#-run-locally)
-- [Different Setup](#-diff-setup)
+- [Different Setup](#-different-setup)
 
 ## 🐳 [Use Docker](#-use-docker)
 
@@ -70,7 +70,7 @@ make install
 ### 🏋️‍♀️ Run the shell script
 
 Now all setups are done for you to run your Python script inside the docker shell.
-Run the following command in the docker shell, and you will see the Python script,<a <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a>, generating zk statements and fire-alarm checks the format of the statements:
+Run the following command in the docker shell, and you will see the Python script,<a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a>, generating zk statements and fire-alarm checks the format of the statements:
 
 ```
 /bin/bash ./run_IR0.sh -f apple_psi 
@@ -101,7 +101,7 @@ The following will
 python3 zk-ApplePSI.py  # or pypy3 zk-ApplePSI.py
 ```
 
-## 🧪 [Different Setup](#-diff-setup)
+## 🧪 [Different Setup](#-different-setup)
 
 The current file contains <a href="https://github.com/hicsail/zk-ApplePSI/blob/a2586bde0d485e65a9a3a8eb37e394081b315d2a/apple_psi.py#L17-L28">    sample inputs of images in a vector </a>.
 If you would like to experiment with a different set of images, you can modify the vector. Be sure to match both apple_secrets and ncmec_secrets; otherwise, the proof will fail.
