@@ -33,7 +33,7 @@ docker-compose up -d --build                             # Inside the root direc
 
 #### 🖥️ Getting started
 
-<strong> Step1: Enter Docker Shell</strong> 
+<i> <strong> Step1: Enter Docker Shell</strong> </i>
 
 Since you have a running container, you can subsequently run the following command in your terminal to start Docker Shell:
 
@@ -52,7 +52,7 @@ If you see something like the following in your command line, you are successful
 </ul>
 
 
-<strong> Step2: Install wiztoolkit</strong> 
+<i> <strong> Step2: Install wiztoolkit</strong> </i> 
 
 We are using Fire Alarm, one of wiztoolkit packages.
 After entering the container, clone wiztoolkit repo and run the following commands to install wiztoolkit:
@@ -83,7 +83,7 @@ This option doesn't require Docker, while it focuses on running the Python scrip
 Run this in the command line:
 ```
 git clone git@github.com:hicsail/zk-ApplePSI.git 
-```
+```        
 
 Move into the root directory of the project
 
