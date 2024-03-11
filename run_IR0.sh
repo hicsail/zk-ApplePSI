@@ -66,10 +66,6 @@ if ! command -v wtk-firealarm >/dev/null 2>&1; then
 fi
 
 
-# Creat dir
-mkdir -p irs/wit
-mkdir -p irs/ins
-
 # Run firealarm test
 cd irs
 
@@ -80,6 +76,10 @@ else
     echo "Error during wtk-firealarm"
     exit 1
 fi
+
+# Creat dir
+mkdir -p irs/wit
+mkdir -p irs/ins
 
 # Copy into directory compatible with mac-and-cheese
 for ir in ${dirlist}
