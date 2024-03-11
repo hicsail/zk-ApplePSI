@@ -4,7 +4,7 @@ zk-ApplePSI repository provides an E2E pipeline, supported by picozk, to test di
 
 ## Project Objective
 
-This software aims to enhance the transparency of the Apple PSI Protocol by using a zero-knowledge proof technique on the server-side setup. 
+This software aims to enhance the transparency of <a href="https://www.apple.com/child-safety/pdf/Apple_PSI_System_Security_Protocol_and_Analysis.pdf"> the Apple PSI Protocol </a> by using a zero-knowledge proof technique on the server-side setup. 
 Apple claims that it utilizes the NCMEC’s CSAM database to identify illegal images stored on users’ devices and generates random images derived from these images to fill bots in a Cuckoo Table Apple builds on its server.
 However, the current implementation does not provide a means for the public to verify whether Apple exclusively uses images from the specified database. 
 Therefore, our implementation offers a step-by-step proof for each stage in the protocol, ensuring that no arbitrary images are added.
