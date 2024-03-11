@@ -40,9 +40,6 @@ fi
 # Copying a designated statement file
 
 dir="/usr/src/app/"
-orig="/code/"
-cp $orig$file.py $dir$file.py
-
 
 # Refresh the directory
 rm -r irs
@@ -74,12 +71,14 @@ mkdir -p irs/wit
 mkdir -p irs/ins
 
 # Run firealarm test
-cd irs && wtk-firealarm $dirlist && cd ..
+cd irs
 
-if wtk-firealarm "$rel" "$wit" "$ins"; then
+if wtk-firealarm $dirlist; then
+    cd ..
     echo "wtk-firealarm successfully completed"
 else
     echo "Error during wtk-firealarm"
+    exit 1
 fi
 
 # Copy into directory compatible with mac-and-cheese
@@ -88,12 +87,12 @@ for ir in ${dirlist}
         if [[ "irs/$ir" == *.ins ]]
             then
                 # if it has, move it to irs/ins
-                mv ./irs/$ir ./irs/ins/$ir
+                mv $dir/irs/$ir $dir/irs/ins/$ir
         fi
         if [[ "irs/$ir" == *.wit ]]
             then
                 # if it has, move it to irs/ins
-                mv ./irs/$ir ./irs/wit/$ir
+                mv $dir/irs/$ir $dir/irs/wit/$ir
         fi
 done
 # copy the irs into local

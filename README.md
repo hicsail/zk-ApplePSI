@@ -27,7 +27,7 @@ Therefore, our implementation offers a step-by-step proof for each stage in the 
 
 Run this line of code in the command line:
 ```
-docker run --platform linux/amd64 -it hicsail/zk-apple-psi:main      
+docker run --platform linux/amd64 -it hicsail/zk-applepsi:main      
 ```
 
 ##### <ins><i> Option B Clone Repo </i> </ins>
@@ -97,6 +97,7 @@ Move into the root directory of the project and install dependencies
 
 ```
 cd zk-ApplePSI
+git clone https://github.com/uvm-plaid/picozk.git
 cp ./consts/poseidon_hash.py ./picozk/picozk/poseidon_hash/poseidon_hash.py
 python3 -m venv venv           # or pypy3 -m venv myenv
 source venv/bin/activate       # or source myenv/bin/activate
