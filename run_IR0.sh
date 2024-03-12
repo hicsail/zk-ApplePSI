@@ -49,9 +49,13 @@ mkdir -p irs
 # Actual Execution
 echo "Running $file ....";
 
-python3 $dir$file.py
-dirlist=`ls irs`
-echo $dirlist
+if python3 $dir$file.py; then
+    dirlist=`ls irs`
+    echo $dirlist
+else
+    echo "Error in the Python Script"
+    exit 1
+fi
 
 # firealarm format check
 
@@ -95,5 +99,3 @@ for ir in ${dirlist}
                 mv $dir/irs/$ir $dir/irs/wit/$ir
         fi
 done
-# copy the irs into local
-cp -r ./irs /code
