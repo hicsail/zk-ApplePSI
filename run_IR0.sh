@@ -49,7 +49,7 @@ mkdir -p irs
 # Actual Execution
 echo "Running $file ....";
 
-if python3 $dir$file.py; then
+if pypy3 $dir$file.py; then
     dirlist=`ls irs`
     echo $dirlist
 else
