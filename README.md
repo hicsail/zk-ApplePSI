@@ -101,8 +101,8 @@ git clone https://github.com/uvm-plaid/picozk.git
 cp ./consts/poseidon_hash.py ./picozk/picozk/poseidon_hash/poseidon_hash.py
 python3 -m venv venv           # or pypy3 -m venv myenv
 source venv/bin/activate       # or source myenv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+pip install --upgrade pip      # or pypy3 -m pip install --upgrade pip
+pip install -r requirements.txt  # or pypy3 -m pip install -r requirements.txt
 pip install picozk/.           # or pypy3 -m pip install picozk/. 
 ```
 
